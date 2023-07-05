@@ -3,7 +3,7 @@ export default function AboutPage() {
       <section>
         <h1>About Me</h1>
         <p>
-          I'm not quite Peter Pan, but people always say I don't look my age because of my Asian genes.
+          I&apos;m not quite Peter Pan, but people always say I don&apos;t look my age because of my Asian genes.
         </p>
         {/* Profile picture / Peter Pan merge? */}
         <p>
