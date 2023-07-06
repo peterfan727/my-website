@@ -32,8 +32,8 @@ const countryMappings: CountryMapping = {
     VN: 'Vietnam 🇻🇳',
 };
 
-export default function Country ( countryCode?: string | string[]) {
-    if (!countryCode || Array.isArray(countryCode)) {
+export default function Country ( countryCode?: string) {
+    if (!countryCode) {
         return undefined
     }
     return countryMappings[countryCode]

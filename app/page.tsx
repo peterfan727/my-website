@@ -1,14 +1,10 @@
 import Country from "./components/country"
+import { headers } from "next/headers"
 
-export default function HomePage({
-  params,
-  searchParams,
-}: {
-  params: { slug: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
-  const code = searchParams['country'] 
-  const country = Country(code)
+export default function HomePage() {
+  const headersList = headers()
+  const code = headersList.get('X-Geo-Country')
+  const country = Country(code || undefined)
   return(
     <section>
       <h1>👋 Hello! Bonjour! Hola! 你好!</h1>

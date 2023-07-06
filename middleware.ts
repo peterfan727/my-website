@@ -4,10 +4,11 @@ import { NextResponse, NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
     // get visitor geo on home page
     if (request.nextUrl.pathname == '/') {
-        const { nextUrl: url, geo } = request
+        const { nextUrl, geo } = request
         const country = geo?.country || 'unknown country'
-        url.searchParams.set('country', country)
-        return NextResponse.rewrite(url)
+        const headers = new Headers()
+        headers.set('X-Geo-Country', country)
+        return NextResponse.next({headers})
     }
     return NextResponse.next()
 }
