@@ -1,4 +1,5 @@
 import Country from "./components/country"
+import Map from "./components/map"
 import { headers } from "next/headers"
 
 export default function HomePage() {
@@ -16,6 +17,7 @@ export default function HomePage() {
       <p>
         Feel free to pin your city on the map to let me know where you are from!
       </p>
+      <Map />
     </section>
   )
 }
