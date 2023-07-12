@@ -48,6 +48,7 @@ export default function Map( props: MapProps ) {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: true,
+        fullscreenControlOptions: {},
         restriction: {
             latLngBounds: {north: 85, south: -85, west: -180, east: 180},
             strictBounds: true,
@@ -98,6 +99,7 @@ export default function Map( props: MapProps ) {
             
             // Focus and add markers
             const { Map } = await loader.importLibrary('maps')
+            mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_LEFT}
             const map = new Map(mapRef.current!, mapOptions);
             const {Marker, AdvancedMarkerElement, PinElement} = await loader.importLibrary('marker');
             const pinBackground = new PinElement({
