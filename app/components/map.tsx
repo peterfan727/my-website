@@ -174,19 +174,17 @@ export default function Map( props: MapProps ) {
             );
             submitButton.addEventListener("click", async () => {
                 if (marker.position && !hasSubmitted) {
-                    let lat = marker.position.lat;
-                    let lng = marker.position.lng;
+                    let new_lat: number =  typeof marker.position.lat === 'function' ? marker.position.lat() : marker.position.lat;
+                    let new_lng: number =  typeof marker.position.lng === 'function' ? marker.position.lng() : marker.position.lng;
                     // add to Cloud Firestore 
                     try {
                         const docRef = await addDoc(collection(db, "map_history"), {
-                          lat: lat,
-                          lng: lng
+                          lat: new_lat,
+                          lng: new_lng
                         });
                         // update UI
-                        let newHistory = [...history, {lat, lng}];
-                        //@ts-ignore
-                        mapOptions.center = {lat, lng};
-                        //@ts-ignore
+                        let newHistory = [...history, {lat:new_lat, lng:new_lng}];
+                        mapOptions.center = {lat:new_lat, lng:new_lng};
                         setHistory(newHistory);
                         setHasSubmitted(true);
                         clear();
