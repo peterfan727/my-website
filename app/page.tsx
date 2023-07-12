@@ -8,16 +8,11 @@ export default function HomePage() {
   const country = Country(code || undefined)
   return(
     <section>
-      <h1>👋 Hello! Bonjour! Hola! 你好!</h1>
-      {/* if country is not undefined, have this component rendered, else empty */}
-      {country ?  (<p>Visitor from {country}! </p>) : null}
-      <p>
-        Welcome to my humble software developer portfolio
-      </p>
-      <p>
-        Feel free to pin your city on the map to let me know where you are from!
-      </p>
-      <Map />
+        <h1>👋 Hello! Bonjour! Hola! 你好!</h1>
+        {country ?  (<p>Visitor from {country}! </p>) : null}
+        <p>Welcome to my humble software developer portfolio</p>
+        <p>Feel free to pin your city on the Guestbook map!</p>
+        <Map country={country}/>
     </section>
   )
 }

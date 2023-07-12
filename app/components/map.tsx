@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import styles from './map.module.css'
+import { db } from '../firebase/firebaseConfig'
+import { collection, addDoc, getDocs } from "firebase/firestore"; 
 
 type Coordinate = {
     lat : number ,
@@ -11,17 +13,29 @@ type Coordinate = {
 }
 
 type MapProps = {
-    history: Coordinate[],
     country?: string,
 }
+
+async function getMapHistory(): Promise<Coordinate[]> {
+    const querySnapshot = await getDocs(collection(db, "map_history"));
+    const history: Coordinate[] = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        const lat = data.lat;
+        const lng = data.lng;
+        return { lat, lng };
+    });
+    return history;
+  }
 
 export default function Map( props: MapProps ) {
     // props
     let detectedCountry = props.country
 
-    const [ history, setHistory ] = useState<Coordinate[]>(props.history);
+    const [ history, setHistory ] = useState<Coordinate[]>([])
     const [ hasSubmitted, setHasSubmitted ] = useState(false)
+
     const mapRef = useRef<HTMLDivElement>(null)
+
     const VANCOUVER = { lat: 49.2827, lng: -123.1207 }
 
     let mapOptions = {
@@ -43,7 +57,18 @@ export default function Map( props: MapProps ) {
     let geocoder: google.maps.Geocoder
 
     useEffect(() => {
-        console.log('useEffect called')
+        const loadData = async () => {
+            try {
+                const historyData = await getMapHistory();
+                setHistory(historyData);
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        loadData();
+    },[])
+
+    useEffect(() => {
         if (!mapRef.current) return;
         initMap()
     }, [history]);
@@ -62,7 +87,6 @@ export default function Map( props: MapProps ) {
             const {Geocoder} = await loader.importLibrary('geocoding')
             geocoder = new Geocoder()
             if (detectedCountry && !hasSubmitted) {
-                console.log("ip-header country")
                 await geocoder.geocode({ address: detectedCountry}, (results, status) => {
                     if (status === google.maps.GeocoderStatus.OK && results) {
                         const location = results[0].geometry.location;
@@ -142,15 +166,28 @@ export default function Map( props: MapProps ) {
             searchButton.addEventListener("click", () =>
                 geocode({ address: inputText.value })
             );
-            submitButton.addEventListener("click", () => {
+            submitButton.addEventListener("click", async () => {
                 if (marker.position && !hasSubmitted) {
                     let lat = marker.position.lat;
                     let lng = marker.position.lng;
-                    let newHistory = [...history, {lat, lng}];
-                    mapOptions.center = {lat, lng};
-                    setHistory(newHistory);
-                    setHasSubmitted(true);
-                    clear();
+                    // add to Cloud Firestore 
+                    try {
+                        const docRef = await addDoc(collection(db, "map_history"), {
+                          lat: lat,
+                          lng: lng
+                        });
+                        console.log("Document written with ID: ", docRef.id);
+                        // update UI
+                        let newHistory = [...history, {lat, lng}];
+                        //@ts-ignore
+                        mapOptions.center = {lat, lng};
+                        //@ts-ignore
+                        setHistory(newHistory);
+                        setHasSubmitted(true);
+                        clear();
+                    } catch (e) {
+                        console.error("Error adding document: ", e);
+                    }
                 } else if (hasSubmitted) {
                     alert("Already submitted a location.");
                 }
