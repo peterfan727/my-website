@@ -7,12 +7,14 @@ export default function HomePage() {
   const code = headersList.get('X-Geo-Country')
   const country = Country(code || undefined)
   return(
-    <section>
+    <>
         <h1>👋 Hello! Bonjour! Hola! 你好!</h1>
-        {country ?  (<p>Visitor from {country}! </p>) : null}
-        <p>Welcome to my humble software developer portfolio</p>
-        <p>Feel free to pin your city on the Guestbook map!</p>
-        <Map country={country}/>
-    </section>
+        <p>
+          {country ?  <>Visitor from {country}! <br/></> : null}
+          Welcome to my humble software developer portfolio
+          <br/>Feel free to pin your city on the guestbook map!
+        </p>
+        <Map  country={country}/>
+    </>
   )
 }
