@@ -62,7 +62,7 @@ export default function Map( props: MapProps ) {
                 const historyData = await getMapHistory();
                 setHistory(historyData);
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         };
         loadData();
@@ -116,6 +116,9 @@ export default function Map( props: MapProps ) {
             new MarkerClusterer({markers: oldMarkers, map: map})
 
             // Geocode UI
+            const uiDiv = document.createElement('div');
+            uiDiv.classList.add(styles.div)
+
             const inputText = document.createElement("input");
             inputText.type = "text";
             inputText.placeholder = "Enter a location";
@@ -131,11 +134,12 @@ export default function Map( props: MapProps ) {
             submitButton.value = "Submit";
             submitButton.classList.add(styles.input, styles.buttonSecondary);
           
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchButton);
+            uiDiv.appendChild(inputText)
+            uiDiv.appendChild(searchButton)
             if (!hasSubmitted) {
-                map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
+                uiDiv.appendChild(submitButton)
             }
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(uiDiv);
 
             /** Inner Functions */
             function clear() {
@@ -157,7 +161,7 @@ export default function Map( props: MapProps ) {
                         }
                     })
                     .catch((e) => {
-                        console.log("Geocode was not successful for the following reason: " + e);
+                        console.error("Geocode was not successful for the following reason: " + e);
                     });
             }
             map.addListener("click", (e: google.maps.MapMouseEvent) => {
@@ -176,7 +180,6 @@ export default function Map( props: MapProps ) {
                           lat: lat,
                           lng: lng
                         });
-                        console.log("Document written with ID: ", docRef.id);
                         // update UI
                         let newHistory = [...history, {lat, lng}];
                         //@ts-ignore
@@ -195,7 +198,7 @@ export default function Map( props: MapProps ) {
         })
         .catch((e) => {
             // do something
-            console.log(e)
+            console.error(e)
         });
     }
     // return Map component
