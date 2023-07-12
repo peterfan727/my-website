@@ -39,7 +39,7 @@ export default function RootLayout({
         <Header/>
         <Navbar/>
         <main className='flex flex-col items-center text-center
-          py-3 md:py-6
+          px-3 py-3 md:py-6 md:px-6
           bg-pink-100'>
           {children}
         </main>
