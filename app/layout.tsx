@@ -87,14 +87,13 @@ export default function RootLayout({
       className={`${ubuntu.variable}`}>
       <body 
         className='
-        antialiased font-ubuntu text-black bg-green-100 dark:text-white dark:bg-[#111010]
-        max-w-6xl flex flex-col 
+        antialiased font-ubuntu text-black bg-sky-200
+        max-w-6xl flex flex-col items-center
         my-3 mx-3 md:mx-auto'>
         <Header/>
         <Navbar/>
         <main className='flex flex-col items-center text-center
-          px-3 py-3 md:py-6 md:px-6
-          bg-pink-100'>
+          max-w-3xl px-3 py-3 md:py-6 md:px-6'>
           {children}
         </main>
       </body>
