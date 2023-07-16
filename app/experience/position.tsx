@@ -16,7 +16,7 @@ export default function Position( props: Experience ) {
     return (
         <Paper 
             elevation={2} 
-            className="w-full py-2 px-3 bg-sky-100">
+            className="w-full py-2 px-3 my-1 bg-sky-100">
             {<div className="p-3">
                 <div className='w-full bg-sky-400 p-1'>
                         <div>{props.startDate}</div><div>{props.duration}</div>
