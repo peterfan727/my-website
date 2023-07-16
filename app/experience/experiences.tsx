@@ -10,7 +10,7 @@ export type Experience = {
 }
 
 const gluxkind_2 = {
-    jobTitle: "Machine Learning Engineer Intern",
+    jobTitle: "Machine Learning Intern",
     company: "Glüxkind Technologies Inc.",
     companyHref: "https://gluxkind.com",
     startDate: "May 2022",

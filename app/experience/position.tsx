@@ -21,7 +21,7 @@ export default function Position( props: Experience ) {
                 <div className='w-full bg-sky-400 p-1'>
                         <div>{props.startDate}</div><div>{props.duration}</div>
                 </div>
-                <h3 className="pt-1 no-underline font-bold">{props.jobTitle}</h3>
+                <h2 className="pt-1">{props.jobTitle}</h2>
                 <Link   
                     href={props.companyHref || ""} 
                     className="underline hover:text-blue-900">

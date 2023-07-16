@@ -11,8 +11,9 @@ export default function ContactPage() {
                 <Link 
                     className='flex flex-col items-center'  
                     href="https://ca.linkedin.com/in/cc-peter-fan">
-                    <p>Please reach me through LinkedIn!</p>
+                    <span>Please reach me through LinkedIn!</span>
                     <Image 
+                        className='m-3'
                         src={logo} 
                         alt='LinkedIn Logo'
                         width={100}
