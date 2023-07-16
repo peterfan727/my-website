@@ -11,7 +11,7 @@ export default function AboutPage() {
                 sx={{width:200, height: 200}}
             />
             <p>
-                I&apos;m not quite Peter "Pan", but people often say I don&apos;t look my age.
+                I&apos;m not quite Peter &quot;Pan&quot;, but people often say I don&apos;t look my age.
             </p>
             <h2>When I am not coding...</h2>
             <p>
