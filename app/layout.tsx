@@ -88,7 +88,7 @@ export default function RootLayout({
       <body 
         className='
         antialiased font-ubuntu text-black bg-sky-200
-        max-w-6xl flex flex-col items-center
+        max-w-6xl min-w-fit flex flex-col items-center overflow-y-scroll
         my-3 mx-3 md:mx-auto'>
         <Header/>
         <Navbar/>
