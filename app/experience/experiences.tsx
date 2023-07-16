@@ -14,7 +14,7 @@ const gluxkind_2 = {
     company: "Glüxkind Technologies Inc.",
     companyHref: "https://gluxkind.com",
     startDate: "May 2022",
-    duration: "5 mo",
+    duration: "5 months",
     tags: [
         "AI", "Machine Learning", "Supervised Learning", "Computer Vision"
     ],
@@ -28,7 +28,7 @@ const gluxkind_1 = {
     company: "Glüxkind Technologies Inc.",
     companyHref: "https://gluxkind.com",
     startDate: "May 2021",
-    duration: "8 mo",
+    duration: "8 months",
     tags: [
         "Mobile App Development", "Embedded System", "Robotics", "Internet of Things (I.O.T.)" 
     ],
