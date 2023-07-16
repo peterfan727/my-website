@@ -1,26 +1,24 @@
 'use client';
-// import { useEffect } from "react";
+import { useEffect } from "react";
 
 export default function Linkedin () {
 
-    // useEffect(() => {
-    //     const script = document.createElement('script');
-    //     script.src="https://platform.linkedin.com/badges/js/profile.js";
-    //     script.async = true;
-    //     script.defer = true;
-    //     script.type = "text/javascript";
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src="https://platform.linkedin.com/badges/js/profile.js";
+        script.async = true;
+        script.defer = true;
+        script.type = "text/javascript";
 
-    //     document.body.appendChild(script)
+        document.body.appendChild(script)
 
-    //     return () => {
-    //         document.body.removeChild(script)
-    //     };
-    // },[])
+        return () => {
+            document.body.removeChild(script)
+        };
+    },[])
 
 
     return (
-        <>
-        <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
         <div
             className="badge-base LI-profile-badge" 
             data-locale="en_US" 
@@ -35,6 +33,5 @@ export default function Linkedin () {
                 Peter Fan
             </a>
         </div>
-        </>
     )
 }
