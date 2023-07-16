@@ -204,5 +204,5 @@ export default function Map( props: MapProps ) {
         });
     }
     // return Map component
-    return <div style={{ width: "100%", height: "400px" }} ref={mapRef} />;
+    return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
 }
