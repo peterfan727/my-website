@@ -2,7 +2,7 @@ import './globals.css'
 import { Inter, Ubuntu } from 'next/font/google'
 import Header from "./components/header"
 import Navbar from './components/navbar'
-import { Analytics } from '@vercel/analytics';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ 
   subsets: ['latin'],
