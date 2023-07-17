@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter, Ubuntu } from 'next/font/google'
 import Header from "./components/header"
 import Navbar from './components/navbar'
+import { Analytics } from '@vercel/analytics';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -95,6 +96,7 @@ export default function RootLayout({
         <main className='flex flex-col items-center text-center
           w-full max-w-3xl px-3 py-3 md:py-6 md:px-6'>
           {children}
+          <Analytics />
         </main>
       </body>
     </html>
