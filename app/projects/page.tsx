@@ -7,7 +7,7 @@ export default function ProjectPage() {
 
     const projects = all_projects.map((p) => {
         return (
-        <Card>
+        <Card key={p.name}>
                 <h2 className='w-full bg-sky-400 p-1'>
                     {p.name}
                 </h2>
