@@ -31,6 +31,9 @@ export default function Chat() {
         onFinish(message) {
             onAiStreamFinishCb(message)
         },
+        onError(error) {
+            console.error(error)
+        },
     })
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
 

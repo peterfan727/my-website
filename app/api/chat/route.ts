@@ -5,7 +5,7 @@ import { AIMessage, HumanMessage } from 'langchain/schema'
 import { PromptTemplate } from "langchain/prompts";
 import getPineconeStore from './getPineconeStore';
 
-// export const runtime = 'edge'
+export const runtime = 'edge'
 
 export async function POST(req: Request) {
     const { messages } = await req.json()
