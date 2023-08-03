@@ -16,15 +16,17 @@ export default function Position( props: Experience ) {
     return (
         <Card>
             <div className='w-full bg-sky-400 p-1'>
-                    <div>{props.startDate}</div><div>{props.duration}</div>
+                <h2 className="pt-1">{props.jobTitle}</h2>
             </div>
-            <h2 className="pt-1">{props.jobTitle}</h2>
             <Link   
                 href={props.companyHref || ""} 
-                className="underline hover:text-blue-900">
-                {props.company}
+                className="m-2 underline hover:text-blue-900">
+                <h3>{props.company}</h3>
             </Link>
-            <p className="px-3 font-normal text-justify">{props.jobDescription}</p>
+            <div className="text-gray-500">{props.startDate} ({props.duration})</div>
+            <p className="px-3 font-normal text-justify">
+                {props.jobDescription}
+            </p>
             <p><strong>Tech used:</strong><br/>{tech_stack}</p>
             <p><strong>Tags:</strong><br/>{tags}</p>
         </Card>
