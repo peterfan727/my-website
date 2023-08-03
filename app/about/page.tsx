@@ -1,42 +1,39 @@
-import { Avatar } from "@mui/material";
-import { Paper } from "@mui/material";
+import Image from "next/image";
+import me from "../../public/me.jpeg";
+import Card from "../components/card";
 
 export default function AboutPage() {
     return (
         <>
             <h1>About Me</h1>
-            <Avatar
-                className="mt-6"
-                alt="Peter Fan"
-                src="/me.jpeg"
-                sx={{width:200, height: 200}}
+            <Image 
+                className="mt-6 rounded-full"
+                src={me}
+                alt='Peter Fan'
+                width={200}
+                height={200}
+                priority 
             />
             <p>
                 I&apos;m not quite Peter &quot;Pan&quot;, but people often say I don&apos;t look my age.
             </p>
 
             <h2 className="m-3">When I am not coding...</h2>
-            <Paper
-                elevation={2} 
-                className="w-full py-2 px-6 my-1 bg-sky-100">
+            <Card>
                 <p>
                     I enjoy reading financial markets 📈 news and Japanese manga
                     <br/>On weekends, I like go for a long hike 🥾 ⛰️ to clear my mind
                 </p>
-            </Paper>
+            </Card>
             <h2 className="m-3">People see me as...</h2>
-            <Paper
-                elevation={2} 
-                className="w-full py-2 px-6 my-1 bg-sky-100">
+            <Card>
                 <p>
                     a helpful and resourceful friend and co-worker
                     <br/>an adventurous traveller and open to trying new things
                 </p>
-            </Paper>
+            </Card>
             <h2 className="m-3">🤓 My Education Background...</h2>
-            <Paper
-                elevation={2} 
-                className="w-full py-2 px-6 my-1 bg-sky-100">
+            <Card>
                 <ul className="px-3">
                 I am an interdisciplinary scholar.<br/>
                         <li>
@@ -50,11 +47,9 @@ export default function AboutPage() {
                             </div>
                         </li>
                 </ul>
-            </Paper>
+            </Card>
             <h2 className="m-3">Areas of Interest</h2>
-            <Paper
-                elevation={2} 
-                className="w-full py-2 px-6 my-1 bg-sky-100">
+            <Card>
                 <h3>Machine Learning</h3>
                 <p className="text-justify">
                     In this golden age of Machine Learning (ML), I am captivated by the transformative potential it holds. 
@@ -64,10 +59,8 @@ export default function AboutPage() {
                     By leveraging these skills, I aim to push the boundaries of AI applications to benefit humanity and the 
                     companies I align myself with.
                 </p>
-            </Paper>
-            <Paper
-                elevation={2} 
-                className="w-full py-2 px-6 my-1 bg-sky-100">
+            </Card>
+            <Card>
                 <h3>Bioinformatics</h3>
                 <p className="text-justify">
                     Bridging my background in pre-clinical drug research and my interest in big data, 
@@ -77,10 +70,8 @@ export default function AboutPage() {
                     interdisciplinary expertise to revolutionize the medical field and contribute to a company that values 
                     cutting-edge, life-saving solutions.
                 </p>
-            </Paper>
-            <Paper
-                elevation={2} 
-                className="w-full py-2 px-6 my-1 bg-sky-100">
+            </Card>
+            <Card>
                 <h3>Microservices</h3>
                 <p className="text-justify">
                     Microservices perfectly blend my social inclination and my problem-solving passion as 
@@ -89,7 +80,7 @@ export default function AboutPage() {
                     My past experiences have honed my skills in crafting efficient, scalable, and robust solutions. 
                     Through microservices, I hope to address multifaceted problems by leveraging the power of domain-driven design.
                 </p>
-            </Paper>
+            </Card>
         </>
     );
 }

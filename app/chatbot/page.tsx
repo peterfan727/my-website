@@ -71,7 +71,7 @@ export default function Chat() {
 
   return ( 
     <div ref={chatContainerRef} 
-        className="w-full h-[36rem] overflow-y-scroll py-5 flex flex-col bg-blue-200">
+        className="w-full h-[36rem] overflow-y-scroll py-5 flex flex-col bg-sky-100">
         <p className='m-2'>Disclaimer:<br/>Unexpected behaviour can happen. AI can generate false information.<br/>Chat history is stored and monitored to help improve the prompt engineering.<br/>Max 25 questions per session.</p>
         {messages.map( m => (
             <div

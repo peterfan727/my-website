@@ -1,4 +1,4 @@
-import MuiTimeline from "./mui_timeline";
+import Timeline from "./timeline";
 import tech_stack_meme from "../../public/tech_stack_meme.jpg";
 import Image from "next/image";
 
@@ -12,7 +12,7 @@ export default function ExperiencePage() {
                 alt='a pancake tech stack meme: so you wanna know what I can stack'
                 priority 
             />
-            <MuiTimeline />
+            <Timeline />
         </>
     );
 }
