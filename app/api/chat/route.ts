@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const llm = new ChatOpenAI({
         modelName: "gpt-3.5-turbo",
         streaming: true,
-        temperature: 1.2,
+        temperature: 1.0,
         maxConcurrency: 1,
         maxTokens: 1000,
         callbacks: [handlers]
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const nonStreamingModel = new ChatOpenAI({
         modelName: "gpt-3.5-turbo",
         streaming: false,
-        temperature: 1.0,
+        temperature: 0.7,
         maxConcurrency: 1,
         maxTokens: 1000
     })
