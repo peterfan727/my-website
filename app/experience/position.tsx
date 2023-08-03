@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Card from "../components/card";
 import { Experience } from './experiences'
 
@@ -20,8 +21,15 @@ export default function Position( props: Experience ) {
             </div>
             <Link   
                 href={props.companyHref || ""} 
-                className="m-2 underline hover:text-blue-900">
-                <h3>{props.company}</h3>
+                className="m-2 flex flex-col items-center justify-center
+                hover:text-blue-900">
+                <h3 className="underline">{props.company}</h3>
+                <Image 
+                    src={props.companyLogoHref}
+                    width={200}
+                    height={200}
+                    alt="company_logo"
+                />
             </Link>
             <div className="text-gray-500">{props.startDate} ({props.duration})</div>
             <p className="px-3 font-normal text-justify">
