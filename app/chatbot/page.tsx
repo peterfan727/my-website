@@ -37,14 +37,6 @@ export default function Chat() {
     })
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
-    // initialize Firestore doc with a chat session
-    useEffect(() => {
-        const setDocUuid = async() => {
-            await setDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {chat_history:[]})
-        }
-        setDocUuid();
-    }, [])
-
     useEffect(() => {
         // Scroll to the bottom when messages change
         if (chatContainerRef.current != null) {
@@ -52,7 +44,21 @@ export default function Chat() {
         }
         // Log chat history of human input to Firebase
         const updateHistory = async() => {
-            if (messages.length != 0) {
+            if (messages.length == 1) {
+                const m = messages.findLast(m => m.role === 'user')
+                // initialize a new Doc on Firestore
+                await setDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
+                    chat_history:[{
+                        id: m!.id,
+                        role: m!.role,
+                        content: m!.content,
+                        createdAt: m!.createdAt != undefined ? Timestamp.fromDate(m!.createdAt) : null,
+                        name: m!.name || null,
+                        function: m!.function_call?.toString() || null,
+                    }]
+                })
+            } else if (messages.length > 1) {
+                // update Doc on Firestore
                 const m = messages.findLast(m => m.role === 'user')
                 await updateDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
                     chat_history: arrayUnion({
