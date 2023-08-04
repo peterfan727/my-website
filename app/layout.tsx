@@ -1,7 +1,6 @@
 import './globals.css'
 import { Inter, Ubuntu } from 'next/font/google'
 import Header from "./components/header"
-import Navbar from './components/navbar'
 import { Analytics } from '@vercel/analytics/react';
 import dynamic from 'next/dynamic';
 
@@ -41,34 +40,20 @@ export const metadata = {
   },
   metadataBase: new URL('https://www.peterfan.dev'),
   openGraph: {
-    title: 'Peter Fan',
-    description: 'My humble software developer portfolio',
+    title: 'Peter Fan | Developer Portfolio',
+    description: 'Welcome to my humble software developer portfolio',
     url: 'https://www.peterfan.dev',
     siteName: 'Peter Fan',
-    // images: [
-    //   {
-    //     url: 'https://nextjs.org/og.png',
-    //     width: 800,
-    //     height: 600,
-    //   },
-    //   {
-    //     url: 'https://nextjs.org/og-alt.png',
-    //     width: 1800,
-    //     height: 1600,
-    //     alt: 'My custom alt',
-    //   },
-    // ],
     locale: 'en_US',
     type: 'website',
   },
-  // fine tune this later
   robots: {
-    index: false,
+    index: true,
     follow: true,
-    nocache: true,
+    nocache: false,
     googleBot: {
       index: true,
-      follow: false,
+      follow: true,
       noimageindex: true,
       'max-video-preview': -1,
       'max-image-preview': 'large',
