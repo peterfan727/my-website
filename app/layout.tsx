@@ -3,6 +3,7 @@ import { Inter, Ubuntu } from 'next/font/google'
 import Header from "./components/header"
 import Navbar from './components/navbar'
 import { Analytics } from '@vercel/analytics/react';
+import dynamic from 'next/dynamic';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -77,6 +78,10 @@ export const metadata = {
 
 }
 
+const DynamicNavbar = dynamic(() => import('./components/navbar'), {
+  ssr: false,
+})
+
 export default function RootLayout({
   children,
 }: {
@@ -92,7 +97,7 @@ export default function RootLayout({
         max-w-6xl min-w-[20em] flex flex-col items-center overflow-y-scroll
         my-3 mx-3 md:mx-auto'>
         <Header/>
-        <Navbar/>
+        <DynamicNavbar/>
         <main className='flex flex-col items-center text-center
           w-full max-w-3xl px-3 py-3 md:py-6 md:px-6'>
           {children}

@@ -43,8 +43,7 @@ export default function Navbar() {
         </Link>
     );
 
-    if (isDesktop) {
-        return (
+    return isDesktop === true ? 
             // nav bar should be horizontal in big screens
             <nav
             id='nav'
@@ -67,10 +66,7 @@ export default function Navbar() {
                 })
             }
             </nav>
-        )
-    } else {
-        return (
-            // nav bar should be vertical in sm screens
+            :   // else nav bar should be vertical in sm screens
             <nav
             id='nav'
             className='flex flex-col w-10/12
@@ -95,31 +91,4 @@ export default function Navbar() {
                     <>{navLink}</>
                 )}
             </nav>
-        )
-    }
 }
-
-const old_nav = 
-    // nav bar should be vertical in sm screens
-    <nav
-    id='nav'
-    className='flex flex-col md:flex-row w-full max-md:w-10/12
-    my-2
-    justify-items-stretch justify-around items-center
-    max-md:divide-y-2 md:divide-x-2 divide-slate-400
-    max-md:border-y-2 border-slate-400'
-    >
-    {
-        navPages.map((page) => {
-            return (
-                    <Link
-                    key={page.path}
-                    href={page.path}
-                    className='w-full px-8 py-2 text-center
-                        text-gray-700 hover:text-gray-300'>
-                        {page.name}
-                    </Link>
-            )
-        })
-    }
-    </nav>
