@@ -1,7 +1,8 @@
 import './globals.css'
 import { Inter, Ubuntu } from 'next/font/google'
 import Header from "./components/header"
-import Navbar from './components/navbar'
+import { Analytics } from '@vercel/analytics/react';
+import dynamic from 'next/dynamic';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -39,34 +40,20 @@ export const metadata = {
   },
   metadataBase: new URL('https://www.peterfan.dev'),
   openGraph: {
-    title: 'Peter Fan',
-    description: 'My humble software developer portfolio',
+    title: 'Peter Fan | Developer Portfolio',
+    description: 'Welcome to my humble software developer portfolio',
     url: 'https://www.peterfan.dev',
     siteName: 'Peter Fan',
-    // images: [
-    //   {
-    //     url: 'https://nextjs.org/og.png',
-    //     width: 800,
-    //     height: 600,
-    //   },
-    //   {
-    //     url: 'https://nextjs.org/og-alt.png',
-    //     width: 1800,
-    //     height: 1600,
-    //     alt: 'My custom alt',
-    //   },
-    // ],
     locale: 'en_US',
     type: 'website',
   },
-  // fine tune this later
   robots: {
-    index: false,
+    index: true,
     follow: true,
-    nocache: true,
+    nocache: false,
     googleBot: {
       index: true,
-      follow: false,
+      follow: true,
       noimageindex: true,
       'max-video-preview': -1,
       'max-image-preview': 'large',
@@ -75,6 +62,10 @@ export const metadata = {
   },
 
 }
+
+const DynamicNavbar = dynamic(() => import('./components/navbar'), {
+  ssr: false,
+})
 
 export default function RootLayout({
   children,
@@ -91,10 +82,11 @@ export default function RootLayout({
         max-w-6xl min-w-[20em] flex flex-col items-center overflow-y-scroll
         my-3 mx-3 md:mx-auto'>
         <Header/>
-        <Navbar/>
+        <DynamicNavbar/>
         <main className='flex flex-col items-center text-center
           w-full max-w-3xl px-3 py-3 md:py-6 md:px-6'>
           {children}
+          <Analytics />
         </main>
       </body>
     </html>
