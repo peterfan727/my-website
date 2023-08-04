@@ -35,7 +35,7 @@ export default function Position( props: Experience ) {
             <p className="px-3 font-normal text-justify">
                 {props.jobDescription}
             </p>
-            <p><strong>Tech used:</strong><br/>{tech_stack}</p>
+            <p><strong>Tech Stack:</strong><br/>{tech_stack}</p>
             <p><strong>Tags:</strong><br/>{tags}</p>
         </Card>
     )

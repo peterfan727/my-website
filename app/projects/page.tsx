@@ -24,14 +24,7 @@ export default function ProjectPage() {
                     </div>
                 </Link>
                 <p>{p.description}</p>
-                <p><strong>Tags:<br/></strong>
-                {p.tags.map((t, idx, t_arr)=> {
-                    if (idx == t_arr.length - 1)
-                        return (<span>{t}</span>)
-                    else
-                        return (<span>{t}, </span>)
-                })}</p>
-                <p><strong>Tech:<br/></strong>
+                <p><strong>Tech Stack:<br/></strong>
                 {p.techs.map((t, idx, t_arr)=> {
                     if (idx == t_arr.length - 1)
                         return (<span>{t}</span>)
@@ -39,6 +32,13 @@ export default function ProjectPage() {
                         return (<span>{t}, </span>)
                 })}
                 </p>
+                <p><strong>Tags:<br/></strong>
+                {p.tags.map((t, idx, t_arr)=> {
+                    if (idx == t_arr.length - 1)
+                        return (<span>{t}</span>)
+                    else
+                        return (<span>{t}, </span>)
+                })}</p>
         </Card>)
     })
 
