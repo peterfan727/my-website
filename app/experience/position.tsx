@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Paper } from "@mui/material";
+import Image from "next/image";
+import Card from "../components/card";
 import { Experience } from './experiences'
 
 export default function Position( props: Experience ) {
@@ -14,23 +15,28 @@ export default function Position( props: Experience ) {
         return (value + sep)
     })
     return (
-        <Paper 
-            elevation={2} 
-            className="w-full py-2 px-3 my-1 bg-sky-100">
-            {<div className="p-3">
-                <div className='w-full bg-sky-400 p-1'>
-                        <div>{props.startDate}</div><div>{props.duration}</div>
-                </div>
+        <Card>
+            <div className='w-full bg-sky-400 p-1'>
                 <h2 className="pt-1">{props.jobTitle}</h2>
-                <Link   
-                    href={props.companyHref || ""} 
-                    className="underline hover:text-blue-900">
-                    {props.company}
-                </Link>
-                <p className="font-normal text-justify">{props.jobDescription}</p>
-                <p><strong>Tech used:</strong><br/>{tech_stack}</p>
-                <p><strong>Tags:</strong><br/>{tags}</p>
-            </div>}
-        </Paper>
+            </div>
+            <Link   
+                href={props.companyHref || ""} 
+                className="m-2 flex flex-col items-center justify-center
+                hover:text-blue-900">
+                <h3 className="underline">{props.company}</h3>
+                <Image 
+                    src={props.companyLogoHref}
+                    width={200}
+                    height={200}
+                    alt="company_logo"
+                />
+            </Link>
+            <div className="text-gray-500">{props.startDate} ({props.duration})</div>
+            <p className="px-3 font-normal text-justify">
+                {props.jobDescription}
+            </p>
+            <p><strong>Tech Stack:</strong><br/>{tech_stack}</p>
+            <p><strong>Tags:</strong><br/>{tags}</p>
+        </Card>
     )
 }
