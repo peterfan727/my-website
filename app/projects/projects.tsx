@@ -15,7 +15,7 @@ const chatbot: Project = {
     I engineered a GPT chatbot that can answer questions about myself. 
     Through this hobby project, I learned how to use OpenAI's API and the Langchain framework to create a vectorized knowledge base (KB), host the vectorized KB on a vector database, and query the database using a Conversational Q&A Chain. It was a fun project that taught me a lot about the challenges in prompt engineering and the importance of a good knowledge base using structured data.
     `,
-    href: "/chatbot",
+    href: "/projects/chatbot",
     imageHref: "/previews/chatbot.png",
     imageAlt: "chatbot_screenshot",
     buttonDescription: '🤖 Try the chatbot!',

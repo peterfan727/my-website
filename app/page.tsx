@@ -20,7 +20,7 @@ export default function HomePage() {
             Welcome to my humble software developer portfolio
             <br/>Feel free to pin your city on the guestbook map!
             </p>
-            <Link href="/chatbot">
+            <Link href="/projects/chatbot">
                 <div className="
                     my-3 p-6 rounded drop-shadow-2xl
                     text-white bg-blue-600 hover:bg-blue-800 

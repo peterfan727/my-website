@@ -2,7 +2,7 @@
  
 import { useChat } from 'ai/react'
 import { useState, useRef, useEffect } from 'react';
-import { db } from '../firebase/firebaseConfig'
+import { db } from '../../firebase/firebaseConfig'
 import { Timestamp, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
 import { v4 as uuidv4 } from 'uuid';
 import { Message } from 'ai';

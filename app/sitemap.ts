@@ -15,15 +15,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
             lastModified: new Date(),
         },
         {
-            url: 'https://www.peterfan.dev/chatbot',
-            lastModified: new Date(),
-        },
-        {
             url: 'https://www.peterfan.dev/experience',
             lastModified: new Date(),
         },
         {
             url: 'https://www.peterfan.dev/projects',
+            lastModified: new Date(),
+        },
+        {
+            url: 'https://www.peterfan.dev/projects/chatbot',
             lastModified: new Date(),
         },
     ]
