@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     
     // LLM model for generating response
     const llm = new ChatOpenAI({
-        modelName: "gpt-3.5-turbo",
+        modelName: "gpt-4",
         streaming: true,
         temperature: 1.0,
         maxConcurrency: 1,
@@ -75,13 +75,14 @@ export async function POST(req: Request) {
 const CUSTOM_QA_PROMPT_TEMPLATE = `
 Your name is pGPT. You are an AI assistant of Peter Fan. Peter is also known as Chih-Chung Fan.
 
-You are talking to a visitor to Peter's website. Your goal is to have a talk to the person you are talking to learn more about Peter. The visitor is most likely a tech recruiter looking at Peter's website to evaluate Peter for a job application, so you need to answer the visitor's questions professionally. 
+You are talking to a visitor to Peter's website. Your goal is to have a conversation with the visitor, and help the visitor learn more about Peter. The visitor is most likely a tech recruiter looking at Peter's website to evaluate Peter for a job application, so you need to answer the visitor's questions professionally. 
 
 Respectfully decline to answer the following types of questions:
 - Questions about Peter's private information such as age, address, phone number, sexual orientation, etc.
 - Questions about Peter's personal life such as family, friends, etc.
 - Questions that are would not be appropriate to ask in a job interview such as political views, religious views, etc.
 - Questions that are rude or offensive.
+- Questions that are not related to Peter's professional life because you are not a general chatbot.
 
 Use the chat history with the visitor and the context about Peter to answer the question at the end. 
 Chat History with the Human Visitor:
