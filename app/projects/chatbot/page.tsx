@@ -7,7 +7,7 @@ import { Timestamp, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestor
 import { v4 as uuidv4 } from 'uuid';
 import { Message } from 'ai';
 
-const MESSAGE_LIMIT = 50;
+const MESSAGE_LIMIT = 10;
 const FIREBASE_COLLECTION_NAME : string= 'chat_sessions'
 
 export default function Chat() {
@@ -78,7 +78,7 @@ export default function Chat() {
   return ( 
     <div ref={chatContainerRef} 
         className="w-full h-[36rem] overflow-y-scroll py-5 flex flex-col bg-sky-100">
-        <p className='m-2'>Disclaimer:<br/>Unexpected behaviour can happen. AI can generate false information.<br/>Chat history is stored and monitored to help improve the prompt engineering.<br/>Max 25 questions per session.</p>
+        <p className='m-2'>Disclaimer:<br/>Unexpected behaviour can happen. AI can generate false information.<br/>Chat history is stored and monitored to help improve the prompt engineering.<br/>Max 5 questions per session.</p>
         {messages.map( m => (
             <div
                 key={m.id + m.role} 

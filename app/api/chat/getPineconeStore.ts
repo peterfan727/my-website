@@ -2,7 +2,7 @@ import { PineconeClient, CreateRequest } from "@pinecone-database/pinecone";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 
-const INDEX_NAME = "chatbot"
+const INDEX_NAME = "chatbot-daef9fa"
 
 export default async function getPineconeStore(): Promise<PineconeStore | null > {
     const pinecone = new PineconeClient();
