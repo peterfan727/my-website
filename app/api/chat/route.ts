@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     
     // LLM model for generating response
     const llm = new ChatOpenAI({
-        modelName: "gpt-3.5-turbo",
+        modelName: "gpt-4",
         streaming: true,
         temperature: 1.0,
         maxConcurrency: 1,
