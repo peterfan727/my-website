@@ -1,3 +1,6 @@
+# [My Website](https://www.peterfan.dev/)
+Click the header/link above to see the deployed website at [https://www.peterfan.dev/](https://www.peterfan.dev/)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## If you want to try to build my project, you can follow the steps below:
