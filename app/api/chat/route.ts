@@ -29,11 +29,11 @@ export async function POST(req: Request) {
 
     // LLM model for questions
     const nonStreamingModel = new ChatOpenAI({
-        modelName: "gpt-3.5-turbo",
+        modelName: "gpt-3.5-turbo-1106",
         streaming: false,
         temperature: 0.7,
         maxConcurrency: 1,
-        maxTokens: 1000
+        maxTokens: 16385
     })
 
     // get vectorstore from Pinecone
