@@ -1,8 +1,8 @@
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
-import { ChatOpenAI } from 'langchain/chat_models/openai'
+import { ChatOpenAI } from '@langchain/openai'
 import { ConversationalRetrievalQAChain } from "langchain/chains";
-import { AIMessage, HumanMessage } from 'langchain/schema'
-import { PromptTemplate } from "langchain/prompts";
+import { AIMessage, HumanMessage } from '@langchain/core/messages'
+import { PromptTemplate } from "@langchain/core/prompts";
 import getPineconeStore from './getPineconeStore';
 
 export const runtime = 'edge'
@@ -19,21 +19,21 @@ export async function POST(req: Request) {
     
     // LLM model for generating response
     const llm = new ChatOpenAI({
-        modelName: "gpt-4",
+        modelName: "gpt-4-1106-preview",
         streaming: true,
         temperature: 1.0,
         maxConcurrency: 1,
-        maxTokens: 1000,
+        maxTokens: 4096,
         callbacks: [handlers]
     })
 
     // LLM model for questions
     const nonStreamingModel = new ChatOpenAI({
-        modelName: "gpt-3.5-turbo",
+        modelName: "gpt-3.5-turbo-1106",
         streaming: false,
         temperature: 0.7,
         maxConcurrency: 1,
-        maxTokens: 1000
+        maxTokens: 4096,
     })
 
     // get vectorstore from Pinecone
