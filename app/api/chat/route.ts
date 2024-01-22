@@ -1,8 +1,8 @@
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
-import { ChatOpenAI } from 'langchain/chat_models/openai'
+import { ChatOpenAI } from '@langchain/openai'
 import { ConversationalRetrievalQAChain } from "langchain/chains";
-import { AIMessage, HumanMessage } from 'langchain/schema'
-import { PromptTemplate } from "langchain/prompts";
+import { AIMessage, HumanMessage } from '@langchain/core/messages'
+import { PromptTemplate } from "@langchain/core/prompts";
 import getPineconeStore from './getPineconeStore';
 
 export const runtime = 'edge'
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
         streaming: true,
         temperature: 1.0,
         maxConcurrency: 1,
-        maxTokens: 1000,
+        maxTokens: 4096,
         callbacks: [handlers]
     })
 
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         streaming: false,
         temperature: 0.7,
         maxConcurrency: 1,
-        maxTokens: 16385
+        maxTokens: 4096,
     })
 
     // get vectorstore from Pinecone

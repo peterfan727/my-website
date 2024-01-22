@@ -5,6 +5,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 export default async function getPineconeStore(): Promise<PineconeStore | null > {
     const INDEX_NAME = process.env.PINECONE_INDEX_NAME!
     const API_KEY = process.env.PINECONE_API_KEY!
+    const HOST_URL = process.env.PINECONE_INDEX_HOST!
     // const ENVIRONMENT = process.env.PINECONE_ENVIRONMENT!
     const pinecone = new Pinecone({ 
         apiKey: API_KEY,
@@ -23,7 +24,7 @@ export default async function getPineconeStore(): Promise<PineconeStore | null >
         console.error("no index found")
         return Promise.resolve(null);
     } else { 
-        const index = pinecone.Index(INDEX_NAME)
+        const index = pinecone.index(INDEX_NAME, HOST_URL)
         return (await PineconeStore.fromExistingIndex(
            embedding, {
                 pineconeIndex: index
