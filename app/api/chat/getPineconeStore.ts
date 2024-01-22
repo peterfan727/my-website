@@ -1,12 +1,14 @@
 import { Pinecone } from "@pinecone-database/pinecone";
-import { PineconeStore } from "langchain/vectorstores/pinecone";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { PineconeStore } from "@langchain/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 export default async function getPineconeStore(): Promise<PineconeStore | null > {
     const INDEX_NAME = process.env.PINECONE_INDEX_NAME!
+    const API_KEY = process.env.PINECONE_API_KEY!
+    // const ENVIRONMENT = process.env.PINECONE_ENVIRONMENT!
     const pinecone = new Pinecone({ 
-        apiKey: process.env.PINECONE_API_KEY!,
-        environment: process.env.PINECONE_ENVIRONMENT! 
+        apiKey: API_KEY,
+        // environment: ENVIRONMENT 
     })
     // get list of indices, and create one if it doesn't exist
     const indexList = await pinecone.listIndexes()
@@ -16,7 +18,7 @@ export default async function getPineconeStore(): Promise<PineconeStore | null >
         modelName:"text-embedding-ada-002"
     })
     if (indexList === null || 
-        (indexList != null && !(indexList.find((i) => i.name == INDEX_NAME )))) {
+        (indexList != null && !(indexList.indexes?.find((i) => i.name == INDEX_NAME )))) {
         // uh-oh. it got deleted.
         console.error("no index found")
         return Promise.resolve(null);
