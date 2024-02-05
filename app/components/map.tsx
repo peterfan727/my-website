@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import styles from './map.module.css'
@@ -45,7 +45,7 @@ export default function Map( props: MapProps ) {
 
     // Hooks
     const mapRef = useRef<HTMLDivElement>(null);
-    // Bundle to prevent error
+    const [isNewSession, setIsNewSession] = useState(true)
 
     // Get map history from Firestore
     const {  data: history, isLoading: mapDataIsLoading, error: mapDataError } = useMapQuery()
@@ -106,7 +106,7 @@ export default function Map( props: MapProps ) {
             // geocode the countryCode from middleware first, centre the map on visitor's country
             const {Geocoder} = await loader.importLibrary('geocoding')
             geocoder = new Geocoder()
-            if (detectedCountry) {
+            if (detectedCountry && isNewSession) {
                 await geocoder.geocode({ address: detectedCountry}, (results, status) => {
                     if (status === google.maps.GeocoderStatus.OK && results) {
                         const location = results[0].geometry.location;
@@ -171,12 +171,14 @@ export default function Map( props: MapProps ) {
                     try {
                         addPin({lat: new_lat, lng: new_lng},{ 
                             onSuccess: () => {
-                                    queryClient.invalidateQueries({queryKey: ['mapHistory']})
-                                    .then(() => {
-                                        mapCanvas.setZoom(8)
+                                    queryClient.invalidateQueries({
+                                        queryKey: ['mapHistory']
+                                    }).then(() => {
                                         mapOptions.center = {lat:new_lat, lng:new_lng}
-                                        mapCanvas.setCenter(mapOptions.center)
+                                        mapOptions.zoom = 8
                                         clearCursorMarker()
+                                    }).then(() => {
+                                        setIsNewSession(false)
                                     })
                                 },
                             onError: (e) => { console.error(e) }
