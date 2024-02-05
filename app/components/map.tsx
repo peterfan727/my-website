@@ -6,6 +6,7 @@ import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import styles from './map.module.css'
 import { db } from '../firebase/firebaseConfig'
 import { collection, addDoc, getDocs } from "firebase/firestore"; 
+import { QueryClient, useQuery} from "@tanstack/react-query";
 
 type Coordinate = {
     lat : number ,
@@ -16,7 +17,8 @@ type MapProps = {
     country?: string,
 }
 
-async function getMapHistory(): Promise<Coordinate[]> {
+const queryClient = new QueryClient()
+const getMapHistory = async() => {
     const querySnapshot = await getDocs(collection(db, "map_history"));
     const history: Coordinate[] = querySnapshot.docs.map((doc) => {
         const data = doc.data();
@@ -25,14 +27,23 @@ async function getMapHistory(): Promise<Coordinate[]> {
         return { lat, lng };
     });
     return history;
-  }
+}
 
 export default function Map( props: MapProps ) {
     // props
     let detectedCountry = props.country
 
-    const [ history, setHistory ] = useState<Coordinate[]>([])
-    const [ hasSubmitted, setHasSubmitted ] = useState(false)
+    // Get map history from Firestore
+    const { data: history, error } = useQuery<Coordinate[]>({
+        queryKey: ['mapHistory'], 
+        queryFn: getMapHistory,
+        initialData: [],
+    }, queryClient) 
+    if (error) {
+        console.error(error)
+    }
+
+    const [ hasSubmitted, setHasSubmitted ] = useState(false) // TODO: use Cookie
 
     const mapRef = useRef<HTMLDivElement>(null)
 
@@ -57,24 +68,13 @@ export default function Map( props: MapProps ) {
     let marker: google.maps.marker.AdvancedMarkerElement
     let geocoder: google.maps.Geocoder
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const historyData = await getMapHistory();
-                setHistory(historyData);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        loadData();
-    },[])
-
+    // Rerender Map when history is updated
     useEffect(() => {
         if (!mapRef.current) return;
-        initMap()
+        initMap(history)
     }, [history]);
 
-    function initMap() {
+    function initMap(history: Coordinate[]) {
         const loader = new Loader({
             apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
             version: "weekly",
@@ -143,8 +143,8 @@ export default function Map( props: MapProps ) {
             }
             map.controls[google.maps.ControlPosition.TOP_LEFT].push(uiDiv);
 
-            /** Inner Functions */
-            function clear() {
+            // Inner Functions 
+            function clearCursorMarker() {
                 marker.position = null;
             }
             
@@ -166,6 +166,8 @@ export default function Map( props: MapProps ) {
                         console.error("Geocode was not successful for the following reason: " + e);
                     });
             }
+
+            // Event Listeners
             map.addListener("click", (e: google.maps.MapMouseEvent) => {
                 geocode({ location: e.latLng });
             });
@@ -178,16 +180,20 @@ export default function Map( props: MapProps ) {
                     let new_lng: number =  typeof marker.position.lng === 'function' ? marker.position.lng() : marker.position.lng;
                     // add to Cloud Firestore 
                     try {
-                        const docRef = await addDoc(collection(db, "map_history"), {
+                        addDoc(collection(db, "map_history"), {
                           lat: new_lat,
                           lng: new_lng
+                        }).then( (_docRef) => {
+                            // update UI
+                            queryClient.fetchQuery({
+                                queryKey: ['mapHistory'], 
+                                queryFn: getMapHistory}
+                            )
+                        }).then( (_data) => {
+                            mapOptions.center = {lat:new_lat, lng:new_lng};
+                            setHasSubmitted(true)
+                            clearCursorMarker()
                         });
-                        // update UI
-                        let newHistory = [...history, {lat:new_lat, lng:new_lng}];
-                        mapOptions.center = {lat:new_lat, lng:new_lng};
-                        setHistory(newHistory);
-                        setHasSubmitted(true);
-                        clear();
                     } catch (e) {
                         console.error("Error adding document: ", e);
                     }
