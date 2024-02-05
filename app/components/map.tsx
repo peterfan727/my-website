@@ -46,17 +46,11 @@ export default function Map( props: MapProps ) {
     // Hooks
     const mapRef = useRef<HTMLDivElement>(null);
     // Bundle to prevent error
-    const queryMultiple = () => {
-        // Get map history from Firestore
-        const {  data: history, isLoading: mapDataIsLoading, error: mapDataError } = useMapQuery()
-        // set up useMutation
-        const { mutate: addPin, isSuccess: addPinSuccess, isError: addPinError} = useAddMapHistory()
-        return { 
-            history, mapDataIsLoading, mapDataError, 
-            addPin, addPinSuccess, addPinError }
-    }
-    // Query Results
-    const { history, mapDataIsLoading, mapDataError, addPin, addPinSuccess, addPinError } = queryMultiple()
+
+    // Get map history from Firestore
+    const {  data: history, isLoading: mapDataIsLoading, error: mapDataError } = useMapQuery()
+    // set up useMutation
+    const { mutate: addPin, isSuccess: addPinSuccess, isError: addPinError} = useAddMapHistory()
     
     // Variables
     let mapCanvas: google.maps.Map
@@ -90,7 +84,7 @@ export default function Map( props: MapProps ) {
         geocoder
             .geocode(request, (results, status) => {
                 if (status == google.maps.GeocoderStatus.OK && results) {
-                    mapCanvas.setZoom(10)
+                    mapCanvas.setZoom(8)
                     mapCanvas.setCenter(results[0].geometry.location);
                     marker.position = results[0].geometry.location;
                     return results;
@@ -179,7 +173,7 @@ export default function Map( props: MapProps ) {
                             onSuccess: () => {
                                     queryClient.invalidateQueries({queryKey: ['mapHistory']})
                                     .then(() => {
-                                        mapCanvas.setZoom(10)
+                                        mapCanvas.setZoom(8)
                                         mapOptions.center = {lat:new_lat, lng:new_lng}
                                         mapCanvas.setCenter(mapOptions.center)
                                         clearCursorMarker()
