@@ -3,11 +3,6 @@ import { headers } from "next/headers"
 import Link from "next/link";
 import Map from "./components/map";
 
-// const DynamicMap = dynamic(() => import('./components/map'), { 
-//     ssr: false,
-//     loading: () => <p>Loading...</p>
-// })
-
 export default function HomePage() {
     const headersList = headers()
     const code = headersList.get('X-Geo-Country')
