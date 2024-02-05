@@ -1,12 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import styles from './map.module.css'
-import { db } from '../firebase/firebaseConfig'
-import { collection, addDoc, getDocs } from "firebase/firestore"; 
-import { QueryClient, useQuery} from "@tanstack/react-query";
+import { queryClient, useMapQuery, useAddMapHistory } from "./useMapQuery";
 
 type Coordinate = {
     lat : number ,
@@ -17,77 +15,104 @@ type MapProps = {
     country?: string,
 }
 
-const queryClient = new QueryClient()
-const getMapHistory = async() => {
-    const querySnapshot = await getDocs(collection(db, "map_history"));
-    const history: Coordinate[] = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        const lat = data.lat;
-        const lng = data.lng;
-        return { lat, lng };
-    });
-    return history;
+const VANCOUVER = { lat: 49.2827, lng: -123.1207 }
+
+const DEFAULT_MAP_OPTIONS = {
+    center: VANCOUVER,
+    zoom: 1,
+    mapId: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID,
+    zoomControl: true,
+    mapTypeControl: false,
+    scaleControl: true,
+    streetViewControl: false,
+    rotateControl: false,
+    fullscreenControl: true,
+    fullscreenControlOptions: {},
+    restriction: {
+        latLngBounds: {north: 85, south: -85, west: -180, east: 180},
+        strictBounds: true,
+    },
 }
+
+const loader = new Loader({
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    version: "weekly",
+});
 
 export default function Map( props: MapProps ) {
     // props
     let detectedCountry = props.country
 
-    // Get map history from Firestore
-    const { data: history, error } = useQuery<Coordinate[]>({
-        queryKey: ['mapHistory'], 
-        queryFn: getMapHistory,
-        initialData: [],
-    }, queryClient) 
-    if (error) {
-        console.error(error)
+    // Hooks
+    const mapRef = useRef<HTMLDivElement>(null);
+    // Bundle to prevent error
+    const queryMultiple = () => {
+        // Get map history from Firestore
+        const {  data: history, isLoading: mapDataIsLoading, error: mapDataError } = useMapQuery()
+        // set up useMutation
+        const { mutate: addPin, isSuccess: addPinSuccess, isError: addPinError} = useAddMapHistory()
+        return { 
+            history, mapDataIsLoading, mapDataError, 
+            addPin, addPinSuccess, addPinError }
     }
-
-    const [ hasSubmitted, setHasSubmitted ] = useState(false) // TODO: use Cookie
-
-    const mapRef = useRef<HTMLDivElement>(null)
-
-    const VANCOUVER = { lat: 49.2827, lng: -123.1207 }
-
-    let mapOptions = {
-        center: VANCOUVER,
-        zoom: 1,
-        mapId: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID,
-        zoomControl: true,
-        mapTypeControl: false,
-        scaleControl: true,
-        streetViewControl: false,
-        rotateControl: false,
-        fullscreenControl: true,
-        fullscreenControlOptions: {},
-        restriction: {
-            latLngBounds: {north: 85, south: -85, west: -180, east: 180},
-            strictBounds: true,
-        },
-    }
+    // Query Results
+    const { history, mapDataIsLoading, mapDataError, addPin, addPinSuccess, addPinError } = queryMultiple()
+    
+    // Variables
+    let mapCanvas: google.maps.Map
+    let mapOptions = DEFAULT_MAP_OPTIONS
     let marker: google.maps.marker.AdvancedMarkerElement
     let geocoder: google.maps.Geocoder
 
-    // Rerender Map when history is updated
-    useEffect(() => {
-        if (!mapRef.current) return;
-        initMap(history)
-    }, [history]);
 
-    function initMap(history: Coordinate[]) {
-        const loader = new Loader({
-            apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-            version: "weekly",
-        });
-        
+    if (mapDataIsLoading || !history || mapDataError) {
+        if (typeof window !== 'undefined') {
+            initMap(loader, [])
+            if (mapDataError) console.error(mapDataError)
+        }
+    }
+    if (history) {
+        if (typeof window !== 'undefined') {
+            initMap(loader, history)
+        }
+    }
+    // return Map component
+    return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
+
+
+    // Inner Functions
+    function clearCursorMarker() {
+        marker.position = null;
+    }
+
+    // Geocode the location and zoom onto it
+    function geocode(request: google.maps.GeocoderRequest) {
+        geocoder
+            .geocode(request, (results, status) => {
+                if (status == google.maps.GeocoderStatus.OK && results) {
+                    mapCanvas.setZoom(10)
+                    mapCanvas.setCenter(results[0].geometry.location);
+                    marker.position = results[0].geometry.location;
+                    return results;
+                } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
+                    alert("Location not found on Google Map.");
+                }
+            })
+            .catch((e) => {
+                console.error("Geocode was not successful for the following reason: " + e);
+            });
+    }
+
+    // Initialize and paint the map with objects
+    function initMap(loader: Loader, history: Coordinate[]) {
         // Load the Google Maps API
         loader
         .importLibrary('core')
         .then( async () => {
-            // geocode the countryCode first
+            // geocode the countryCode from middleware first, centre the map on visitor's country
             const {Geocoder} = await loader.importLibrary('geocoding')
             geocoder = new Geocoder()
-            if (detectedCountry && !hasSubmitted) {
+            if (detectedCountry) {
                 await geocoder.geocode({ address: detectedCountry}, (results, status) => {
                     if (status === google.maps.GeocoderStatus.OK && results) {
                         const location = results[0].geometry.location;
@@ -100,22 +125,18 @@ export default function Map( props: MapProps ) {
             // Focus and add markers
             const { Map } = await loader.importLibrary('maps')
             mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_LEFT}
-            const map = new Map(mapRef.current!, mapOptions);
-            const {Marker, AdvancedMarkerElement, PinElement} = await loader.importLibrary('marker');
+            mapCanvas = new Map(mapRef.current!, mapOptions);
+            populateMarkers(loader, mapCanvas, history)
+            // Orange pin for user's location
+            const { AdvancedMarkerElement, PinElement} = await loader.importLibrary('marker');
             const pinBackground = new PinElement({
                 background: '#FBBC04',
             });
-            if (!hasSubmitted) {
-                marker = new AdvancedMarkerElement({
-                    map, 
-                    position: mapOptions.center, 
-                    title: 'You',
-                    content: pinBackground.element});
-            }
-            let oldMarkers = history.map((latlng) => {
-                return new Marker({ position: latlng })
-            })
-            new MarkerClusterer({markers: oldMarkers, map: map})
+            marker = new AdvancedMarkerElement({
+                map: mapCanvas, 
+                position: mapOptions.center, 
+                title: 'You',
+                content: pinBackground.element});
 
             // Geocode UI
             const uiDiv = document.createElement('div');
@@ -138,67 +159,37 @@ export default function Map( props: MapProps ) {
           
             uiDiv.appendChild(inputText)
             uiDiv.appendChild(searchButton)
-            if (!hasSubmitted) {
-                uiDiv.appendChild(submitButton)
-            }
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(uiDiv);
+            uiDiv.appendChild(submitButton)
+            mapCanvas.controls[google.maps.ControlPosition.TOP_LEFT].push(uiDiv);
 
-            // Inner Functions 
-            function clearCursorMarker() {
-                marker.position = null;
-            }
-            
-            function geocode(request: google.maps.GeocoderRequest) {
-                geocoder
-                    .geocode(request, (results, status) => {
-                        if (status == google.maps.GeocoderStatus.OK && results) {
-                            map.setZoom(4)
-                            map.setCenter(results[0].geometry.location);
-                            if (!hasSubmitted) {
-                                marker.position = results[0].geometry.location;
-                            }
-                            return results;
-                        } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
-                            alert("Location not found on Google Map.");
-                        }
-                    })
-                    .catch((e) => {
-                        console.error("Geocode was not successful for the following reason: " + e);
-                    });
-            }
-
-            // Event Listeners
-            map.addListener("click", (e: google.maps.MapMouseEvent) => {
+            // Set Event Listeners
+            mapCanvas.addListener("click", (e: google.maps.MapMouseEvent) => {
                 geocode({ location: e.latLng });
             });
             searchButton.addEventListener("click", () =>
                 geocode({ address: inputText.value })
             );
             submitButton.addEventListener("click", async () => {
-                if (marker.position && !hasSubmitted) {
+                if (marker.position) {
                     let new_lat: number =  typeof marker.position.lat === 'function' ? marker.position.lat() : marker.position.lat;
                     let new_lng: number =  typeof marker.position.lng === 'function' ? marker.position.lng() : marker.position.lng;
                     // add to Cloud Firestore 
                     try {
-                        addDoc(collection(db, "map_history"), {
-                          lat: new_lat,
-                          lng: new_lng
-                        }).then( (_docRef) => {
-                            // update UI
-                            queryClient.fetchQuery({
-                                queryKey: ['mapHistory'], 
-                                queryFn: getMapHistory}
-                            )
-                        }).then( (_data) => {
-                            mapOptions.center = {lat:new_lat, lng:new_lng};
-                            setHasSubmitted(true)
-                            clearCursorMarker()
-                        });
+                        addPin({lat: new_lat, lng: new_lng},{ 
+                            onSuccess: () => {
+                                    queryClient.invalidateQueries({queryKey: ['mapHistory']})
+                                    .then(() => {
+                                        mapCanvas.setZoom(10)
+                                        mapOptions.center = {lat:new_lat, lng:new_lng}
+                                        mapCanvas.setCenter(mapOptions.center)
+                                        clearCursorMarker()
+                                    })
+                                },
+                            onError: (e) => { console.error(e) }
+                        })
                     } catch (e) {
                         console.error("Error adding document: ", e);
                     }
-                } else if (hasSubmitted) {
-                    alert("Already submitted a location.");
                 }
             });
         })
@@ -207,6 +198,15 @@ export default function Map( props: MapProps ) {
             console.error(e)
         });
     }
-    // return Map component
-    return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
+
+    function populateMarkers(loader: Loader, map: google.maps.Map, history: Coordinate[]) {
+        loader.importLibrary('core')
+        .then( async () => {
+            const {Marker} = await loader.importLibrary('marker');
+            let oldMarkers = history.map((latlng) => {
+                return new Marker({ position: latlng })
+            })
+            new MarkerClusterer({markers: oldMarkers, map: map})
+        })
+    }
 }
