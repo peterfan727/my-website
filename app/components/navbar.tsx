@@ -31,17 +31,23 @@ export default function Navbar() {
     }
 
     // pathname logic to handle interactive vertical navbar
+    // fallback to 'Home' if pathname is listed in navPages
     let pathname = usePathname();
+    let curPage = navPages.find((page) => page.path === pathname)
+    const label = curPage ? curPage.name + '  ▼' : 'Home  ▼'
+    console.log(label)
+    const link = curPage ? curPage.path : '/'
 
     const navLink = (
         <Link
-            href={pathname}
+            href={pathname} // note: even though you are on /projects/chatbot, this will show "Home", but the link is to self
             className="px-8 py-2 text-center text-gray-700 hover:text-gray-300"
             onClick={toggleIsExpanded}
         >
-            {navPages.find((page) => page.path === pathname)?.name + '  ▼'}
+            {label}
         </Link>
-    );
+    )
+        
 
     return isDesktop === true ? 
             // nav bar should be horizontal in big screens

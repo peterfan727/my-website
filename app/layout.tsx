@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter, Ubuntu } from 'next/font/google'
 import Header from "./components/header"
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import dynamic from 'next/dynamic';
 
 const inter = Inter({ 
@@ -87,6 +88,7 @@ export default function RootLayout({
           w-full max-w-3xl px-3 py-3 md:py-6 md:px-6'>
           {children}
           <Analytics />
+          <SpeedInsights />
         </main>
       </body>
     </html>

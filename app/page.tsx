@@ -1,12 +1,7 @@
 import Country from "./components/country"
 import { headers } from "next/headers"
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const DynamicMap = dynamic(() => import('./components/map'), { 
-    ssr: false,
-    loading: () => <p>Loading...</p>
-})
+import Map from "./components/map";
 
 export default function HomePage() {
     const headersList = headers()
@@ -20,7 +15,7 @@ export default function HomePage() {
             Welcome to my humble software developer portfolio
             <br/>Feel free to pin your city on the guestbook map!
             </p>
-            <Link href="/chatbot">
+            <Link href="/projects/chatbot">
                 <div className="
                     my-3 p-6 rounded drop-shadow-2xl
                     text-white bg-blue-600 hover:bg-blue-800 
@@ -28,7 +23,7 @@ export default function HomePage() {
                     🤖 Talk to my GPT chatbot! 
                 </div>
             </Link>
-            <DynamicMap  country={country}/>
+            <Map country={country}/>
         </>
     )
 }
