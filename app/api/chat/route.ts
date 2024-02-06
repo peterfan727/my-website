@@ -1,12 +1,19 @@
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 import { ChatOpenAI } from '@langchain/openai'
-import { ConversationalRetrievalQAChain } from "langchain/chains";
+import { ConversationalRetrievalQAChain } from "langchain/chains"
 import { AIMessage, HumanMessage } from '@langchain/core/messages'
-import { PromptTemplate } from "@langchain/core/prompts";
-import getPineconeStore from './getPineconeStore';
+import { PromptTemplate } from "@langchain/core/prompts"
+import getPineconeStore from './getPineconeStore'
 
 export const runtime = 'edge'
 
+/**
+ * POST /api/chat. Use OpenAI LLM to generate a Langchain v0 vector query and use Open AI LLM
+ * to generate a response based on the queried result and the chat history. Vercel AI SDK is
+ * used to handle the streaming of the response.
+ * @param req Request
+ * @returns StreamingTextResponse(stream)
+ */
 export async function POST(req: Request) {
     const { messages } = await req.json()
     const chat_history = (messages as Message[]).map(m =>

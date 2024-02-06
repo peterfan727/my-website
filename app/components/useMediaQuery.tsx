@@ -1,5 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
+/**
+ * A custom hook to determine if the screen size matches a given query.
+ * @param query string that describes the screen size
+ * @returns boolean
+ */
 const useMediaQuery = (query: string) => {
     const [matches, setMatches] = useState<boolean>();
 

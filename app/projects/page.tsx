@@ -1,8 +1,12 @@
-import Card from "../components/card";
-import Link from "next/link";
-import Image from "next/image";
-import { all_projects } from "./projects";
+import Card from "../components/card"
+import Link from "next/link"
+import Image from "next/image"
+import { all_projects } from "./projects"
 
+/**
+ * Renders the project page.
+ * @returns JSX.Element
+ */
 export default function ProjectPage() {
 
     const projects = all_projects.map((p) => {

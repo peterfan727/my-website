@@ -1,6 +1,9 @@
-// Default Error page when invalid routing occurs
 import Link from 'next/link'
- 
+
+/**
+ * Default Error page when invalid routing occurs.
+ * @returns JSX.Element
+ */
 export default function NotFound() {
   return (
     <section>

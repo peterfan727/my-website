@@ -5,6 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import useMediaQuery from './useMediaQuery'
 
+// A list of pages to be displayed in the navbar and their Router path
 const navPages = [
     {   path: '/',
         name: 'Home',
@@ -23,7 +24,12 @@ const navPages = [
     }
 ]
 
+/**
+ * My custom, collapsable navbar component that can be either horizontal or vertical depending on the screen size.
+ * @returns JSX.Element
+ */
 export default function Navbar() {
+    // Media query to determine if the navbar should be horizontal or vertical
     let isDesktop = useMediaQuery('(min-width: 768px)')
     const [isExpanded, setIsExpanded] = useState(false)
     const toggleIsExpanded = () => {
@@ -35,8 +41,6 @@ export default function Navbar() {
     let pathname = usePathname();
     let curPage = navPages.find((page) => page.path === pathname)
     const label = curPage ? curPage.name + '  ▼' : 'Home  ▼'
-    console.log(label)
-    const link = curPage ? curPage.path : '/'
 
     const navLink = (
         <Link

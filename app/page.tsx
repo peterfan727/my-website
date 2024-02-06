@@ -1,7 +1,7 @@
 import Country from "./components/country"
 import { headers } from "next/headers"
-import Link from "next/link";
-import Map from "./components/map";
+import Link from "next/link"
+import Map from "./components/map"
 
 export default function HomePage() {
     const headersList = headers()

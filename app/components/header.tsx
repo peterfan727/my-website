@@ -1,3 +1,7 @@
+/**
+ * The website's header component.
+ * @returns JSX.Element
+ */
 export default function Header() {
   return (
     <div className="text-center">

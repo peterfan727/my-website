@@ -1,8 +1,13 @@
-import Link from "next/link";
-import Image from "next/image";
-import Card from "../components/card";
+import Link from "next/link"
+import Image from "next/image"
+import Card from "../components/card"
 import { Experience } from './experiences'
 
+/**
+ * A component that renders a position card.
+ * @param \{jobTitle : string, company : string, companyHref? : string, companyLogoHref : string, startDate : string, duration : string, jobDescription : string, tags : string[], techs : string[]\} : Experience
+ * @returns JSX.Element
+ */
 export default function Position( props: Experience ) {
     const tags = props.tags.map( (value, index, arr) => {
         const len = arr.length

@@ -1,7 +1,11 @@
-import Timeline from "./timeline";
-import tech_stack_meme from "../../public/tech_stack_meme.jpg";
-import Image from "next/image";
+import Timeline from "./timeline"
+import tech_stack_meme from "../../public/tech_stack_meme.jpg"
+import Image from "next/image"
 
+/**
+ * Renders the experience page.
+ * @returns JSX.Element
+ */
 export default function ExperiencePage() {
     return (
         <>
