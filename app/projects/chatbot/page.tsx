@@ -1,15 +1,19 @@
 'use client'
  
 import { useChat } from 'ai/react'
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react'
 import { db } from '../../firebase/firebaseConfig'
-import { Timestamp, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
-import { v4 as uuidv4 } from 'uuid';
-import { Message } from 'ai';
+import { Timestamp, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"
+import { v4 as uuidv4 } from 'uuid'
+import { Message } from 'ai'
 
 const MESSAGE_LIMIT = 20;
 const FIREBASE_COLLECTION_NAME : string= 'chat_sessions'
 
+/**
+ * The chat component that uses the useChat hook to interact with the AI assistant.
+ * @returns JSX.Element
+ */
 export default function Chat() {
     // helper callback function to update chat history after AI stream finishes
     const onAiStreamFinishCb = async(m : Message) => {
@@ -24,8 +28,8 @@ export default function Chat() {
             })
         })
     }
-
-    const [uuid, setUuid] = useState<string>(new Date().toISOString() + uuidv4())
+    // Chat session uuid
+    const [ uuid, setUuid] = useState<string>(new Date().toISOString() + uuidv4())
     const { messages, input, handleInputChange, handleSubmit } = useChat({
         id:uuid,
         onFinish(message) {
@@ -112,7 +116,5 @@ export default function Chat() {
             </button>
         </form>
     </div>
-    
-    
   )
 }

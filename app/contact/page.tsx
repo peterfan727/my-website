@@ -1,8 +1,12 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import logo from '../../public/800px-LinkedIn_logo_initials.png';
-import Card from '../components/card';
+import Link from 'next/link'
+import Image from 'next/image'
+import logo from '../../public/800px-LinkedIn_logo_initials.png'
+import Card from '../components/card'
 
+/**
+ * Renders the contact page.
+ * @returns JSX.Element
+ */
 export default function ContactPage() {
     return (
         <>

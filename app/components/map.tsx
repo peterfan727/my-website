@@ -1,10 +1,10 @@
 'use client'
 
-import { useRef, useState } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import { useRef, useState } from "react"
+import { Loader } from "@googlemaps/js-api-loader"
+import { MarkerClusterer } from "@googlemaps/markerclusterer"
+import { queryClient, useMapQuery, useAddMapHistory } from "./useMapQuery"
 import styles from './map.module.css'
-import { queryClient, useMapQuery, useAddMapHistory } from "./useMapQuery";
 
 type Coordinate = {
     lat : number ,
@@ -39,6 +39,11 @@ const loader = new Loader({
     version: "weekly",
 });
 
+/**
+ * Create a Google Map with geocoding UI and markers retrieved from NoSQL database. Allow adding new Markers to the database and on the map.
+ * @param props MapProps
+ * @returns JSX.Element
+ */
 export default function Map( props: MapProps ) {
     // props
     let detectedCountry = props.country
@@ -58,13 +63,14 @@ export default function Map( props: MapProps ) {
     let marker: google.maps.marker.AdvancedMarkerElement
     let geocoder: google.maps.Geocoder
 
-
+    // Generate a Map without marker history before Firebase data is loaded, or when Fireebase data is not available
     if (mapDataIsLoading || !history || mapDataError) {
         if (typeof window !== 'undefined') {
             initMap(loader, [])
             if (mapDataError) console.error(mapDataError)
         }
     }
+    // When Firebase data is available, generate a Map with marker history
     if (history) {
         if (typeof window !== 'undefined') {
             initMap(loader, history)
@@ -171,16 +177,16 @@ export default function Map( props: MapProps ) {
                     try {
                         addPin({lat: new_lat, lng: new_lng},{ 
                             onSuccess: () => {
-                                    queryClient.invalidateQueries({
-                                        queryKey: ['mapHistory']
-                                    }).then(() => {
-                                        mapOptions.center = {lat:new_lat, lng:new_lng}
-                                        mapOptions.zoom = 8
-                                        clearCursorMarker()
-                                    }).then(() => {
-                                        setIsNewSession(false)
-                                    })
-                                },
+                                queryClient.invalidateQueries({
+                                    queryKey: ['mapHistory']
+                                }).then(() => {
+                                    mapOptions.center = {lat:new_lat, lng:new_lng}
+                                    mapOptions.zoom = 8
+                                    clearCursorMarker()
+                                }).then(() => {
+                                    setIsNewSession(false)
+                                })
+                            },
                             onError: (e) => { console.error(e) }
                         })
                     } catch (e) {

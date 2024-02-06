@@ -1,15 +1,9 @@
 import './globals.css'
-import { Inter, Ubuntu } from 'next/font/google'
+import { Ubuntu } from 'next/font/google'
 import Header from "./components/header"
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import dynamic from 'next/dynamic';
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter'
-})
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import dynamic from 'next/dynamic'
 
 const ubuntu = Ubuntu({
   weight: '500',
@@ -33,7 +27,7 @@ export const metadata = {
   { name: 'Peter Fan', url: 'https://www.peterfan.dev' }],
   // colorScheme: 'dark',
   creator: 'Chih-Chung Fan',
-  // publisher: 'Sebastian Markbåge',
+  // publisher: '',
   formatDetection: {
     email: true,
     address: false,
@@ -63,7 +57,7 @@ export const metadata = {
   },
 
 }
-
+// This is used because the component calls useMediaQuery, which requires browser `window` to be defined
 const DynamicNavbar = dynamic(() => import('./components/navbar'), {
   ssr: false,
 })

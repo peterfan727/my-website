@@ -3,6 +3,11 @@ type CardProps = {
     className?: string;
   };
 
+/**
+ * A reusable card component.
+ * @param \{children : React.ReactNode, className? : string} : CardProps
+ * @returns JSX.Element
+ */
 export default function Card({ children, className }: CardProps) {
     return (
         <div className={`

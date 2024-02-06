@@ -32,6 +32,11 @@ const countryMappings: CountryMapping = {
     VN: 'Vietnam 🇻🇳',
 };
 
+/**
+ * Check if the country code is in the dictionary and return the country name and emoji.
+ * @param countryCode? string | null | undefined - the country code
+ * @returns string | undefined
+ */
 export default function Country ( countryCode?: string) {
     if (!countryCode) {
         return undefined
