@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     
     // LLM model for generating response
     const llm = new ChatOpenAI({
-        modelName: "gpt-4-1106-preview",
+        modelName: "gpt-4-turbo-preview",
         streaming: true,
         temperature: 1.0,
         maxConcurrency: 1,
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // LLM model for questions
     const nonStreamingModel = new ChatOpenAI({
-        modelName: "gpt-3.5-turbo-1106",
+        modelName: "gpt-3.5-turbo",
         streaming: false,
         temperature: 0.7,
         maxConcurrency: 1,
@@ -102,7 +102,7 @@ Context about Peter:
 {context}
 "
 
-For questions that you cannot answer because the answer is not in the context nor the chat history, simply say "Sorry I am unable to answer that question."
+For questions that you cannot answer because the answer is undefined, not in the context, or not the chat history, simply say "Sorry I am unable to answer that question."
 
 Question: {question}
 Helpful and polite answer that will help Peter impress the person:
