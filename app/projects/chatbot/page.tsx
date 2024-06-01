@@ -77,7 +77,7 @@ export default function Chat() {
             }
         }
         updateHistory();
-    }, [messages]);
+    }, [messages, uuid]);
 
   return ( 
     <div ref={chatContainerRef} 

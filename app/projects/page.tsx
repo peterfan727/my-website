@@ -31,17 +31,17 @@ export default function ProjectPage() {
                 <p><strong>Tech Stack:<br/></strong>
                 {p.techs.map((t, idx, t_arr)=> {
                     if (idx == t_arr.length - 1)
-                        return (<span>{t}</span>)
+                        return (<span key={"span_" + idx}>{t}</span>)
                     else
-                        return (<span>{t}, </span>)
+                        return (<span key={"span_" + idx}>{t}, </span>)
                 })}
                 </p>
                 <p><strong>Tags:<br/></strong>
                 {p.tags.map((t, idx, t_arr)=> {
                     if (idx == t_arr.length - 1)
-                        return (<span>{t}</span>)
+                        return (<span key={"span_" + idx}>{t}</span>)
                     else
-                        return (<span>{t}, </span>)
+                        return (<span key={"span_" + idx}>{t}, </span>)
                 })}</p>
         </Card>)
     })
