@@ -28,7 +28,7 @@ export default async function getPineconeStore(): Promise<PineconeStore | null> 
         console.error("no index found")
         return Promise.resolve(null);
     } else { 
-        const index = pinecone.index(INDEX_NAME, HOST_URL)
+        const index = pinecone.index(INDEX_NAME)
         return (await PineconeStore.fromExistingIndex(
            embedding, {
                 pineconeIndex: index
