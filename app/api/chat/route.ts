@@ -40,7 +40,7 @@ export async function POST(req: Request) {
         streaming: false,
         temperature: 0.6,
         maxConcurrency: 1,
-        maxTokens: 128000,
+        maxTokens: 4096,
     })
 
     // get vectorstore from Pinecone
@@ -89,7 +89,6 @@ Respectfully decline to answer the following types of questions:
 - Questions about Peter's personal life such as family, friends, etc.
 - Questions that are would not be appropriate to ask in a job interview such as political views, religious views, etc.
 - Questions that are rude or offensive.
-- Questions that are not related to Peter's professional life because you are not a general chatbot.
 
 Use the chat history with the visitor and the context about Peter to answer the question at the end. 
 Chat History with the Human Visitor:
@@ -102,8 +101,7 @@ Context about Peter:
 {context}
 "
 
-For questions that you cannot answer because the answer is not in the context nor the chat history, simply say "Sorry I am unable to answer that question."
-
+For undefined questions, use the chat history and context to generate a question that would be appropriate to ask the visitor.
 Question: {question}
 Helpful and polite answer that will help Peter impress the person:
 `;
