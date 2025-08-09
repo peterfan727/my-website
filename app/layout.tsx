@@ -3,7 +3,7 @@ import { Ubuntu } from 'next/font/google'
 import Header from "./components/header"
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import dynamic from 'next/dynamic'
+import NavbarClient from './components/NavbarClient'
 
 const ubuntu = Ubuntu({
   weight: '500',
@@ -57,10 +57,7 @@ export const metadata = {
   },
 
 }
-// This is used because the component calls useMediaQuery, which requires browser `window` to be defined
-const DynamicNavbar = dynamic(() => import('./components/navbar'), {
-  ssr: false,
-})
+
 
 export default function RootLayout({
   children,
@@ -77,7 +74,7 @@ export default function RootLayout({
         max-w-6xl min-w-[20em] flex flex-col items-center overflow-y-scroll
         my-3 mx-3 md:mx-auto'>
         <Header/>
-        <DynamicNavbar/>
+        <NavbarClient/>
         <main className='flex flex-col items-center text-center
           w-full max-w-3xl px-3 py-3 md:py-6 md:px-6'>
           {children}
