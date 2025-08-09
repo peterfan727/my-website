@@ -3,10 +3,10 @@ import { headers } from "next/headers"
 import Link from "next/link"
 import Map from "./components/map"
 
-export default function HomePage() {
-    const headersList = headers()
-    const code = headersList.get('X-Geo-Country')
-    const country = Country(code || undefined)
+export default async function HomePage() {
+    const headersList = await headers();
+    const code = headersList.get('X-Geo-Country');
+    const country = Country(code || undefined);
     return(
         <>
             <h1>👋 Hello! Bonjour! Hola! 你好!</h1>

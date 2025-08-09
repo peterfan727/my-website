@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* :root {
   --foreground-rgb: 0, 0, 0;
@@ -28,18 +26,27 @@ body {
 
 @layer base {
   h1 {
-    @apply text-3xl font-bold;
+    font-size: 1.875rem; /* equivalent to text-3xl */
+    font-weight: 700;    /* equivalent to font-bold */
   }
   h2 {
-    @apply text-2xl font-bold;
+    font-size: 1.5rem;   /* equivalent to text-2xl */
+    font-weight: 700;    /* equivalent to font-bold */
   }
   h3 {
-    @apply text-xl underline;
+    font-size: 1.25rem;  /* equivalent to text-xl */
+    text-decoration: underline;
   }
   p {
-    @apply my-3 text-neutral-800 leading-loose;
+    margin-top: 0.75rem;   /* equivalent to my-3 */
+    margin-bottom: 0.75rem;
+    color: #262626;        /* equivalent to text-neutral-800 */
+    line-height: 1.75;     /* equivalent to leading-loose */
   }
   ul {
-    @apply my-5 text-neutral-800 leading-loose;
+    margin-top: 1.25rem;   /* equivalent to my-5 */
+    margin-bottom: 1.25rem;
+    color: #262626;        /* equivalent to text-neutral-800 */
+    line-height: 1.75;     /* equivalent to leading-loose */
   }
 }
