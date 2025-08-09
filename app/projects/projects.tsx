@@ -10,16 +10,16 @@ export type Project = {
 }
 
 const chatbot: Project = {
-    name: "GPT Chatbot",
+    name: "GPT-3 Chatbot (deprecated)",
     description: `
-    I engineered a GPT chatbot that can answer questions about myself. 
-    Through this hobby project, I learned how to use OpenAI's API and the Langchain framework to create a vectorized knowledge base (KB), host the vectorized KB on a vector database, and query the database using a Conversational Q&A Chain. It was a fun project that taught me a lot about the challenges in prompt engineering and the importance of a good knowledge base using structured data.
+    I engineered a RAG LLM chatbot that can answer questions about myself. 
+    Through this hobby project, I learned how to use OpenAI's embedding model and the Langchain framework to create a vectorized knowledge base (KB), host the vectorized knowledge on a vector database, and query the database using a Conversational Q&A Chain. It was a fun project that taught me a lot about the challenges in prompt engineering and the importance of a good knowledge base using structured data.
     `,
-    href: "/projects/chatbot",
+    href: "", // Link Disabled
     imageHref: "/previews/chatbot.png",
     imageAlt: "chatbot_screenshot",
-    buttonDescription: '🤖 Try the chatbot!',
-    tags: ["AI", "Chatbot", "OpenAI", "LLM", "Prompt Engineering"],
+    buttonDescription: '🤖 This version is deprecated',
+    tags: ["AI", "Chatbot", "OpenAI", "LLM", "Prompt Engineering", "RAG"],
     techs: ["Langchain", "OpenAI", "Python", "React", "Pinecone"],
 }
 
