@@ -61,6 +61,7 @@ export default function Map( props: MapProps ) {
     const mapCanvasRef = useRef<google.maps.Map | null>(null);
     const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
     const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+    const uiDivRef = useRef<HTMLDivElement | null>(null);
     const [mapInitialized, setMapInitialized] = useState(false);
 
     // Effect: Initialize map as soon as mapRef is available, and update when history loads
@@ -146,8 +147,19 @@ export default function Map( props: MapProps ) {
                 content: pinBackground.element});
 
             // Geocode UI
+            // Remove previous UI div if it exists
+            if (uiDivRef.current && mapCanvasRef.current) {
+                // Remove from controls array
+                const controlsArray = mapCanvasRef.current.controls[google.maps.ControlPosition.TOP_LEFT];
+                const idx = controlsArray.getArray().indexOf(uiDivRef.current);
+                if (idx !== -1) {
+                    controlsArray.removeAt(idx);
+                }
+            }
+
             const uiDiv = document.createElement('div');
             uiDiv.classList.add(styles.div)
+            uiDivRef.current = uiDiv; // Save reference
 
             const inputText = document.createElement("input");
             inputText.type = "text";
