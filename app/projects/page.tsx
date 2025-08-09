@@ -20,7 +20,7 @@ export default function ProjectPage() {
                     className="hover:shadow-xl mt-3"
                     src={p.imageHref} width={500} height={300} 
                     alt={p.imageAlt}
-                    style={{ height: "auto" }}/>
+                    style={{ width: "auto", height: "auto" }}/>
                     <div className="
                     my-3 p-6 rounded drop-shadow-2xl
                     text-white bg-blue-600 hover:bg-blue-800 
