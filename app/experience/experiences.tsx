@@ -10,6 +10,23 @@ export type Experience = {
     techs: string[],
 }
 
+const siemens_eda = {
+    jobTitle: "Software Developer",
+    company: "Siemens EDA",
+    companyHref: "https://eda.sw.siemens.com",
+    companyLogoHref: "/logos/siemens.svg",
+    startDate: "Sept 2024",
+    duration: "Current",
+    tags: [
+        "Python", "ML", "LLM", "AI", "Agent", "Semiconductor", "EDA"
+    ],
+    jobDescription: 
+        `Development of machine learning-driven integrated circuit design and verification software used 
+        by major semiconductor companies around the world. Integration and development of LLM Agent to assist 
+        users of Solido Designer Environment.`,
+    techs: ["Python", "Linux", "Jira", "Jenkins"],
+}
+
 const gluxkind_2 = {
     jobTitle: "Machine Learning Intern",
     company: "Glüxkind Technologies Inc.",
@@ -21,7 +38,10 @@ const gluxkind_2 = {
         "AI", "Machine Learning", "Supervised Learning", "Computer Vision"
     ],
     jobDescription: 
-        "Development of the autonomous driving feature for a smart baby stroller. I contributed to the semantic segmentation machine learning model, planned and balanced AI training data, and automated the processing of terabytes of image data using Python and bash scripts. I also supervised the manual data labelling process and developed a user-presence detection model.",
+        `Development of the autonomous driving feature for a smart baby stroller. 
+        I contributed to the semantic segmentation machine learning model, planned and balanced AI training data, 
+        and automated the processing of terabytes of image data using Python and bash scripts. 
+        I also supervised the manual data labelling process and developed a user-presence detection model.`,
     techs: ["Python", "PyTorch", "OpenCV", "AWS", "Linux"],
 }
 
@@ -35,8 +55,12 @@ const gluxkind_1 = {
     tags: [
         "Mobile App Development", "Embedded System", "Robotics", "Internet of Things (I.O.T.)" 
     ],
-    jobDescription: "Independent development of a cross-platform mobile application using React Native and Node packages. I implemented a Bluetooth client API for the app and a Bluetooth server on the Arduino micro-controller firmware. I also added a new back-end feature on the ROS stack for logging system topics and assisted the mechatronics engineer in ROS navigation stack development.",
+    jobDescription: 
+        `Independent development of a cross-platform mobile application using React Native and Node packages. 
+        I implemented a Bluetooth client API for the app and a Bluetooth server on the Arduino micro-controller 
+        firmware. I also added a new back-end feature on the ROS stack for logging system topics and assisted the 
+        mechatronics engineer in ROS navigation stack development.`,
     techs: ["React Native", "JavaScript", "Arduino", "C++", "ROS", "Linux"],
 }
 
-export const Experiences = [gluxkind_2, gluxkind_1]
+export const Experiences = [siemens_eda, gluxkind_2, gluxkind_1]

@@ -14,7 +14,9 @@ export default function ContactPage() {
             <Card>
                 <Link 
                     className='flex flex-col items-center'  
-                    href="https://ca.linkedin.com/in/cc-peter-fan">
+                    href="https://ca.linkedin.com/in/cc-peter-fan"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <span>Please reach me through LinkedIn!</span>
                     <Image 
                         className='m-3'
