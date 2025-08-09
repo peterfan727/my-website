@@ -24,12 +24,14 @@ export default function Position( props: Experience ) {
             <div className='w-full bg-sky-400 p-1'>
                 <h2 className="pt-1">{props.jobTitle}</h2>
             </div>
-            <Link   
-                href={props.companyHref || ""} 
-                className="m-2 flex flex-col items-center justify-center
-                hover:text-blue-900">
+            <Link
+                href={props.companyHref || ""}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="m-2 flex flex-col items-center justify-center hover:text-blue-900"
+            >
                 <h3 className="underline">{props.company}</h3>
-                <Image 
+                <Image
                     src={props.companyLogoHref}
                     width={200}
                     height={200}
