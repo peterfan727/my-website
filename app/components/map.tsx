@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { MarkerClusterer } from "@googlemaps/markerclusterer"
 import { queryClient, useMapQuery, useAddMapHistory } from "./useMapQuery"
@@ -57,42 +57,50 @@ export default function Map( props: MapProps ) {
     // set up useMutation
     const { mutate: addPin, isSuccess: addPinSuccess, isError: addPinError} = useAddMapHistory()
     
-    // Variables
-    let mapCanvas: google.maps.Map
-    let mapOptions = DEFAULT_MAP_OPTIONS
-    let marker: google.maps.marker.AdvancedMarkerElement
-    let geocoder: google.maps.Geocoder
+    // Variables (must be refs to persist across renders)
+    const mapCanvasRef = useRef<google.maps.Map | null>(null);
+    const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
+    const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+    const [mapInitialized, setMapInitialized] = useState(false);
 
-    // Generate a Map without marker history before Firebase data is loaded, or when Fireebase data is not available
-    if (mapDataIsLoading || !history || mapDataError) {
-        if (typeof window !== 'undefined') {
-            initMap(loader, [])
-            if (mapDataError) console.error(mapDataError)
+    // Effect: Initialize map as soon as mapRef is available, and update when history loads
+    useEffect(() => {
+        if (!mapRef.current || mapInitialized) return;
+        // If data is loading or errored, show map with no markers
+        if (mapDataIsLoading || !history || mapDataError) {
+            initMap(loader, []);
+            if (mapDataError) console.error(mapDataError);
+            setMapInitialized(true);
         }
-    }
-    // When Firebase data is available, generate a Map with marker history
-    if (history) {
-        if (typeof window !== 'undefined') {
-            initMap(loader, history)
-        }
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mapRef, mapDataIsLoading, history, mapDataError, mapInitialized]); // ESLint is safe to ignore for now, as initMap is a local function and not recreated on every render.
+
+    // Effect: When history loads, re-initialize map with markers
+    useEffect(() => {
+        if (!mapRef.current || !history || mapDataIsLoading || mapDataError) return;
+        initMap(loader, history);
+        setMapInitialized(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mapRef, history, mapDataIsLoading, mapDataError]); 
+
     // return Map component
     return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
 
 
     // Inner Functions
     function clearCursorMarker() {
-        marker.position = null;
+        if (markerRef.current) markerRef.current.position = null;
     }
 
     // Geocode the location and zoom onto it
     function geocode(request: google.maps.GeocoderRequest) {
-        geocoder
+        if (!geocoderRef.current || !mapCanvasRef.current || !markerRef.current) return;
+        geocoderRef.current
             .geocode(request, (results, status) => {
                 if (status == google.maps.GeocoderStatus.OK && results) {
-                    mapCanvas.setZoom(8)
-                    mapCanvas.setCenter(results[0].geometry.location);
-                    marker.position = results[0].geometry.location;
+                    mapCanvasRef.current!.setZoom(8)
+                    mapCanvasRef.current!.setCenter(results[0].geometry.location);
+                    markerRef.current!.position = results[0].geometry.location;
                     return results;
                 } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
                     alert("Location not found on Google Map.");
@@ -111,29 +119,28 @@ export default function Map( props: MapProps ) {
         .then( async () => {
             // geocode the countryCode from middleware first, centre the map on visitor's country
             const {Geocoder} = await loader.importLibrary('geocoding')
-            geocoder = new Geocoder()
+            geocoderRef.current = new Geocoder()
+            let mapOptions = { ...DEFAULT_MAP_OPTIONS }
             if (detectedCountry && isNewSession) {
-                await geocoder.geocode({ address: detectedCountry}, (results, status) => {
+                await geocoderRef.current.geocode({ address: detectedCountry}, (results, status) => {
                     if (status === google.maps.GeocoderStatus.OK && results) {
                         const location = results[0].geometry.location;
-                        mapOptions.center.lat = location.lat()
-                        mapOptions.center.lng = location.lng()
+                        mapOptions.center = { lat: location.lat(), lng: location.lng() }
                     }
                 });
             }
-            
             // Focus and add markers
             const { Map } = await loader.importLibrary('maps')
             mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_LEFT}
-            mapCanvas = new Map(mapRef.current!, mapOptions);
-            populateMarkers(loader, mapCanvas, history)
+            mapCanvasRef.current = new Map(mapRef.current!, mapOptions);
+            populateMarkers(loader, mapCanvasRef.current, history)
             // Orange pin for user's location
             const { AdvancedMarkerElement, PinElement} = await loader.importLibrary('marker');
             const pinBackground = new PinElement({
                 background: '#FBBC04',
             });
-            marker = new AdvancedMarkerElement({
-                map: mapCanvas, 
+            markerRef.current = new AdvancedMarkerElement({
+                map: mapCanvasRef.current, 
                 position: mapOptions.center, 
                 title: 'You',
                 content: pinBackground.element});
@@ -160,19 +167,19 @@ export default function Map( props: MapProps ) {
             uiDiv.appendChild(inputText)
             uiDiv.appendChild(searchButton)
             uiDiv.appendChild(submitButton)
-            mapCanvas.controls[google.maps.ControlPosition.TOP_LEFT].push(uiDiv);
+            mapCanvasRef.current.controls[google.maps.ControlPosition.TOP_LEFT].push(uiDiv);
 
             // Set Event Listeners
-            mapCanvas.addListener("click", (e: google.maps.MapMouseEvent) => {
+            mapCanvasRef.current.addListener("click", (e: google.maps.MapMouseEvent) => {
                 geocode({ location: e.latLng });
             });
             searchButton.addEventListener("click", () =>
                 geocode({ address: inputText.value })
             );
             submitButton.addEventListener("click", async () => {
-                if (marker.position) {
-                    let new_lat: number =  typeof marker.position.lat === 'function' ? marker.position.lat() : marker.position.lat;
-                    let new_lng: number =  typeof marker.position.lng === 'function' ? marker.position.lng() : marker.position.lng;
+                if (markerRef.current && markerRef.current.position) {
+                    let new_lat: number =  typeof markerRef.current.position.lat === 'function' ? markerRef.current.position.lat() : markerRef.current.position.lat;
+                    let new_lng: number =  typeof markerRef.current.position.lng === 'function' ? markerRef.current.position.lng() : markerRef.current.position.lng;
                     // add to Cloud Firestore 
                     try {
                         addPin({lat: new_lat, lng: new_lng},{ 
@@ -204,9 +211,9 @@ export default function Map( props: MapProps ) {
     function populateMarkers(loader: Loader, map: google.maps.Map, history: Coordinate[]) {
         loader.importLibrary('core')
         .then( async () => {
-            const {Marker} = await loader.importLibrary('marker');
+            const { AdvancedMarkerElement } = await loader.importLibrary('marker');
             let oldMarkers = history.map((latlng) => {
-                return new Marker({ position: latlng })
+                return new AdvancedMarkerElement({ position: latlng })
             })
             new MarkerClusterer({markers: oldMarkers, map: map})
         })
