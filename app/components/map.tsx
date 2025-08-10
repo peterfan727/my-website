@@ -12,7 +12,9 @@ type Coordinate = {
 }
 
 type MapProps = {
-    country?: string,
+    country? : string,
+    lat? : string,
+    long? : string,
 }
 
 const VANCOUVER = { lat: 49.2827, lng: -123.1207 }
@@ -46,7 +48,9 @@ const loader = new Loader({
  */
 export default function Map( props: MapProps ) {
     // props
-    let detectedCountry = props.country
+    let detectedCountry = props.country || undefined
+    let geoLat = props.lat ? parseFloat(props.lat) : null
+    let geoLong = props.long ? parseFloat(props.long) : null
 
     // Hooks
     const mapRef = useRef<HTMLDivElement>(null);
@@ -118,17 +122,22 @@ export default function Map( props: MapProps ) {
         loader
         .importLibrary('core')
         .then( async () => {
-            // geocode the countryCode from middleware first, centre the map on visitor's country
+            // geocode the countryCode or LatLng, centre the map on visitor's country
             const {Geocoder} = await loader.importLibrary('geocoding')
             geocoderRef.current = new Geocoder()
             let mapOptions = { ...DEFAULT_MAP_OPTIONS }
-            if (detectedCountry && isNewSession) {
-                await geocoderRef.current.geocode({ address: detectedCountry}, (results, status) => {
-                    if (status === google.maps.GeocoderStatus.OK && results) {
-                        const location = results[0].geometry.location;
-                        mapOptions.center = { lat: location.lat(), lng: location.lng() }
-                    }
-                });
+            if (isNewSession) {
+                if (geoLat && geoLong) {
+                    mapOptions.center = {lat: geoLat, lng: geoLong};
+                }
+                else if (detectedCountry) {
+                    await geocoderRef.current.geocode({ address: detectedCountry}, (results, status) => {
+                        if (status === google.maps.GeocoderStatus.OK && results) {
+                            const location = results[0].geometry.location;
+                            mapOptions.center = { lat: location.lat(), lng: location.lng() }
+                        }
+                    });
+                }
             }
             // Focus and add markers
             const { Map } = await loader.importLibrary('maps')
