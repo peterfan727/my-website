@@ -4,6 +4,7 @@ import { NextResponse, NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
     // get visitor geo on home page
     if (request.nextUrl.pathname == '/') {
+        // @ts-expect-error: geo is available in Vercel Edge runtime
         const { nextUrl, geo } = request
         const country = geo?.country || 'unknown country'
         const headers = new Headers()
