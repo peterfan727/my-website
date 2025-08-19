@@ -36,12 +36,15 @@ export async function POST(req: NextRequest) {
                 if (step[0] === 'messages') {
                     const valuesArr = Array.from(step[1].values());
                     for (const msg of valuesArr) {
-                        console.log("Message:", msg);
+                        // console.log("Message:", msg);
                         if (msg instanceof AIMessageChunk && typeof msg.content === 'string' && msg.content.length > 0) {
                             controller.enqueue(msg.content);
                         } 
                     }
                 }
+				if (step[0] === 'values') {
+					console.log("Values:", step[1]);
+				}
             }
             controller.close();
         }

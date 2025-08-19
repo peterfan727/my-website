@@ -5,6 +5,7 @@ import { tool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { z } from 'zod';
+import { CUSTOM_QA_PROMPT_TEMPLATE } from '../chat/_route';
 
 
 // Singleton objects
@@ -43,17 +44,20 @@ async function getAvgTool() {
 
 async function getAdderTool() {
     const adderSchema = z.object({
-        a: z.number(),
-        b: z.number(),
+        numbers: z.array(z.number()),
     })
     if (!adderToolInstance) {
         adderToolInstance = tool(
-            async ({ a, b }) => {
-                return [`The sum of ${a} and ${b}`, (a + b).toString()];
+            async ({ numbers }) => {
+                if (!Array.isArray(numbers) || numbers.length === 0) {
+                    return 'No numbers provided.';
+                }
+                const sum = numbers.reduce((acc, num) => acc + num, 0);
+                return [`The sum of ${numbers}`, sum.toString()];
             },
             {
                 name: 'adder',
-                description: 'Adds two numbers together.',
+                description: 'Adds multiple numbers together.',
                 schema: adderSchema,
                 responseFormat: "content_and_artifact"
             }
@@ -119,9 +123,7 @@ export async function getAgent(llmType: 'gemini' | 'openai' = 'gemini') {
             llm: llmInstance,
             tools: [retrieverTool, adderTool, avgTool],
             checkpointer: memoryInstance,
-            // prompt: "You are a helpful assistant. \
-            // Use the provided tools to answer user queries as accurately as possible.\
-            // If you don't know the answer, say 'I don't know'.",
+            prompt: CUSTOM_QA_PROMPT_TEMPLATE,
         });
     }
     return { 
