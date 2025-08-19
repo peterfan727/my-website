@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                     }
                 }
 				if (step[0] === 'values') {
-					console.log("Values:", step[1]);
+					// console.log("Values:", step[1]); Disabled for production
 				}
             }
             controller.close();
