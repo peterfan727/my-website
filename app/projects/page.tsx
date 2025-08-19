@@ -15,37 +15,33 @@ export default function ProjectPage() {
             <h2 className='w-full bg-sky-400 p-1'>
                 {p.name}
             </h2>
-            {p.href ? (
-                <Link href={p.href}>
-                    <Image 
-                        className="hover:shadow-xl mt-3"
-                        src={p.imageHref} width={500} height={300} 
-                        alt={p.imageAlt}
-                        style={{ width: "auto", height: "auto" }}
-                    />
-                    <div className="
-                        my-3 p-6 rounded drop-shadow-2xl
-                        text-white bg-blue-600 hover:bg-blue-800 
-                    ">
-                        {p.buttonDescription}
+            <div style={{ width: "80%", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                {p.href ? (
+                    <Link href={p.href} style={{ width: "100%" }}>
+                        <Image 
+                            className="hover:shadow-xl mt-3"
+                            src={p.imageHref} width={500} height={300} 
+                            alt={p.imageAlt}
+                            style={{ width: "100%", height: "auto" }}
+                        />
+                        <div className="w-full my-3 p-6 rounded drop-shadow-2xl text-white bg-blue-600 hover:bg-blue-800 text-center">
+                            {p.buttonDescription}
+                        </div>
+                    </Link>
+                ) : (
+                    <div style={{ width: "100%", pointerEvents: "none", opacity: 0.6 }}>
+                        <Image 
+                            className="hover:shadow-xl mt-3"
+                            src={p.imageHref} width={500} height={300} 
+                            alt={p.imageAlt}
+                            style={{ width: "100%", height: "auto" }}
+                        />
+                        <div className="w-full my-3 p-6 rounded drop-shadow-2xl text-white bg-blue-600 text-center">
+                            {p.buttonDescription}
+                        </div>
                     </div>
-                </Link>
-            ) : (
-                <div style={{ pointerEvents: "none", opacity: 0.6 }}>
-                    <Image 
-                        className="hover:shadow-xl mt-3"
-                        src={p.imageHref} width={500} height={300} 
-                        alt={p.imageAlt}
-                        style={{ width: "auto", height: "auto" }}
-                    />
-                    <div className="
-                        my-3 p-6 rounded drop-shadow-2xl
-                        text-white bg-blue-600 
-                    ">
-                        {p.buttonDescription}
-                    </div>
-                </div>
-            )}
+                )}
+            </div>
             <p>{p.description}</p>
             <p><strong>Tech Stack:<br/></strong>
                 {p.techs.map((t, idx, t_arr)=> {
