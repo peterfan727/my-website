@@ -38,18 +38,30 @@ export default function HomePage() {
         <>
             <h1>👋 Hello! Bonjour! Hola! 你好!</h1>
             <p>
-                {geo.countryCode ? (
-                    <>Visitor from {geo.city ? `${geo.city}, ` : ""}{geo.countryCode} {geo.countryFlag || ""}!<br/></>
-                ) : null}
+                    {geo.countryCode ? (
+                        <>
+                            <span style={{
+                                background: "#fff",
+                                color: "#1e293b",
+                                padding: "0.2em 0.5em",
+                                borderRadius: "0.5em",
+                                fontWeight: "bold",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+                            }}>
+                                Visitor from {geo.city ? `${geo.city}, ` : ""}{geo.countryCode} {geo.countryFlag || ""}!
+                            </span>
+                            <br/>
+                        </>
+                    ) : null}
                 Welcome to my humble software developer portfolio
                 <br />Feel free to pin your city on the guestbook map!
             </p>
-            <Link href="">
+            <Link href="/projects/chatbot_v2">
                 <div className="
                     my-3 p-6 rounded drop-shadow-2xl
                     text-white bg-blue-600 hover:bg-blue-800 
                 ">
-                    🤖 GPT-5 chat bot coming soon
+                    🤖 Talk to My Chatbot &#40;LLM Agent!&#41;
                 </div>
             </Link>
             <Map country={geo.countryCode} lat={geo.geoLat} long={geo.geoLong} />

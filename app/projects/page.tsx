@@ -12,38 +12,57 @@ export default function ProjectPage() {
     const projects = all_projects.map((p) => {
         return (
         <Card key={p.name}>
-                <h2 className='w-full bg-sky-400 p-1'>
-                    {p.name}
-                </h2>
+            <h2 className='w-full bg-sky-400 p-1'>
+                {p.name}
+            </h2>
+            {p.href ? (
                 <Link href={p.href}>
                     <Image 
-                    className="hover:shadow-xl mt-3"
-                    src={p.imageHref} width={500} height={300} 
-                    alt={p.imageAlt}
-                    style={{ width: "auto", height: "auto" }}/>
+                        className="hover:shadow-xl mt-3"
+                        src={p.imageHref} width={500} height={300} 
+                        alt={p.imageAlt}
+                        style={{ width: "auto", height: "auto" }}
+                    />
                     <div className="
-                    my-3 p-6 rounded drop-shadow-2xl
-                    text-white bg-blue-600 hover:bg-blue-800 
+                        my-3 p-6 rounded drop-shadow-2xl
+                        text-white bg-blue-600 hover:bg-blue-800 
                     ">
-                    {p.buttonDescription} 
+                        {p.buttonDescription}
                     </div>
                 </Link>
-                <p>{p.description}</p>
-                <p><strong>Tech Stack:<br/></strong>
+            ) : (
+                <div style={{ pointerEvents: "none", opacity: 0.6 }}>
+                    <Image 
+                        className="hover:shadow-xl mt-3"
+                        src={p.imageHref} width={500} height={300} 
+                        alt={p.imageAlt}
+                        style={{ width: "auto", height: "auto" }}
+                    />
+                    <div className="
+                        my-3 p-6 rounded drop-shadow-2xl
+                        text-white bg-blue-600 
+                    ">
+                        {p.buttonDescription}
+                    </div>
+                </div>
+            )}
+            <p>{p.description}</p>
+            <p><strong>Tech Stack:<br/></strong>
                 {p.techs.map((t, idx, t_arr)=> {
                     if (idx == t_arr.length - 1)
                         return (<span key={"span_" + idx}>{t}</span>)
                     else
                         return (<span key={"span_" + idx}>{t}, </span>)
                 })}
-                </p>
-                <p><strong>Tags:<br/></strong>
+            </p>
+            <p><strong>Tags:<br/></strong>
                 {p.tags.map((t, idx, t_arr)=> {
                     if (idx == t_arr.length - 1)
                         return (<span key={"span_" + idx}>{t}</span>)
                     else
                         return (<span key={"span_" + idx}>{t}, </span>)
-                })}</p>
+                })}
+            </p>
         </Card>)
     })
 

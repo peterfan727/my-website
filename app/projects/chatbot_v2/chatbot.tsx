@@ -6,7 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function ChatbotPage() {
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: 'Hi! I am Peter\'s AI chatbot. How can I help you today?' },
+        { 
+            role: 'assistant', 
+            content: `Hi! I am Peter\'s AI chatbot. I can do multi-step reasoning and tool calling to help you 
+            with your questions. Tools availble currently are: RAG (retrieval augmented generation), number addition, 
+            average calculation. Ask away!`
+        },
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
