@@ -1,45 +1,95 @@
 'use client'
  
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 import { useState, useRef, useEffect } from 'react'
 import { db } from '../../firebase/firebaseConfig'
 import { Timestamp, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"
 import { v4 as uuidv4 } from 'uuid'
-import { Message } from 'ai'
+import { DefaultChatTransport, UIMessage } from 'ai'
 
 const MESSAGE_LIMIT = 20;
 const FIREBASE_COLLECTION_NAME : string= 'chat_sessions'
+
+/**
+ * Extracts the message content from a UIMessage instance.
+ * @param message UIMessage
+ * @returns string
+ */
+export function extractUIMessageContent(message: UIMessage): string {
+    if (!message.parts || message.parts.length === 0) return ''
+
+    message.parts.forEach(part => {
+      switch (part.type) {
+        case 'text':
+          console.log('Text:', part.text);
+          return part.text;
+        // catch other cases
+        default:
+          console.log('Unhandled Message Type received:', part.type);
+      }
+    })
+    return ''
+}
+
+/**
+ * Create a new chat session on Firebase
+ */
+async function createChatSession(uuid: string, message: UIMessage) {
+    await setDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
+        chat_history: [{
+            id: message.id,
+            role: message.role,
+            content: extractUIMessageContent(message),
+            createdAt: message.metadata?.timestamp ? Timestamp.fromDate(message.metadata.timestamp) : null,
+        }]
+    })
+}
+
+/**
+ * Update an existing chat session on Firebase
+ */
+async function updateChatSession(uuid: string, message: UIMessage) {
+    await updateDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
+        chat_history: arrayUnion({
+            id: message.id,
+            role: message.role,
+            content: extractUIMessageContent(message),
+            createdAt: message.metadata?.timestamp ? Timestamp.fromDate(message.metadata.timestamp) : null,
+        })
+    })
+}
+
 
 /**
  * The chat component that uses the useChat hook to interact with the AI assistant.
  * @returns JSX.Element
  */
 export default function Chat() {
-    // helper callback function to update chat history after AI stream finishes
-    const onAiStreamFinishCb = async(m : Message) => {
-        await updateDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
-            chat_history : arrayUnion({
-                id: m.id,
-                role: m.role,
-                content: m.content,
-                createdAt: m.createdAt ? Timestamp.fromDate(m.createdAt) : null,
-                name: m.name || null,
-                function: m.function_call?.toString() || null,
-            })
-        })
-    }
     // Chat session uuid
     const [ uuid, setUuid] = useState<string>(new Date().toISOString() + uuidv4())
-    const { messages, input, handleInputChange, handleSubmit } = useChat({
-        id:uuid,
-        onFinish(message) {
-            onAiStreamFinishCb(message)
+    const [ input, setInput] = useState<string>('')
+
+    const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
+    // helper callback function to update chat history after AI stream finishes
+    const onAiStreamFinishCb = async(m : UIMessage) => {
+        await updateChatSession(uuid, m);
+    }
+
+    const { messages, sendMessage, status } = useChat({
+        transport: new DefaultChatTransport({
+            api: 'api/chatv2',
+        }),
+        id: uuid,
+        onFinish: ({ message }: { message: UIMessage }) => {
+            if (message) {
+                onAiStreamFinishCb(message);
+            }
         },
         onError(error) {
             console.error(error)
         },
     })
-    const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         // Scroll to the bottom when messages change
@@ -51,29 +101,11 @@ export default function Chat() {
             if (messages.length == 1) {
                 const m = messages.findLast(m => m.role === 'user')
                 // initialize a new Doc on Firestore
-                await setDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
-                    chat_history:[{
-                        id: m!.id,
-                        role: m!.role,
-                        content: m!.content,
-                        createdAt: m!.createdAt != undefined ? Timestamp.fromDate(m!.createdAt) : null,
-                        name: m!.name || null,
-                        function: m!.function_call?.toString() || null,
-                    }]
-                })
+                await createChatSession(uuid, m!);
             } else if (messages.length > 1) {
                 // update Doc on Firestore
                 const m = messages.findLast(m => m.role === 'user')
-                await updateDoc(doc(db, FIREBASE_COLLECTION_NAME, uuid), {
-                    chat_history: arrayUnion({
-                        id: m!.id,
-                        role: m!.role,
-                        content: m!.content,
-                        createdAt: m!.createdAt != undefined ? Timestamp.fromDate(m!.createdAt) : null,
-                        name: m!.name || null,
-                        function: m!.function_call?.toString() || null,
-                    })
-                })
+                await updateChatSession(uuid, m!);
             }
         }
         updateHistory();
@@ -92,7 +124,9 @@ export default function Chat() {
                 <div key={m.id} 
                     className={"w-fit my-2 p-2 border-2 border-black rounded text-left " + 
                     (m.role === 'user' ? 'mr-10 bg-white ' : 'ml-10 bg-green-300 ')}>
-                    {m.content}
+                    {m.parts.map((part, index) => 
+                        part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+                    )}
                 </div>
                 {m.role === 'assistant' ? <label className="m-2">AI</label> : null} 
             </div>
@@ -100,14 +134,20 @@ export default function Chat() {
         ))}
         {(messages.length >= MESSAGE_LIMIT) ? <p className='m-2'>Sorry Message Limit Reached</p> : null}
         <form 
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+            e.preventDefault();
+            if (input.trim()) {
+                sendMessage({ text: input});
+            }
+        }}
         className='w-full flex flex-row bottom-0 left-0 right-0 sticky'>
             <input
                 className="w-full p-5 border border-gray-300 rounded shadow-xl"
                 placeholder={messages.length >= MESSAGE_LIMIT ? 'Sorry message limit reached.' : 'Ask the AI assistant about Peter'}
                 value={input}
                 contentEditable="true"
-                onChange={handleInputChange}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={status != 'ready'}
             />
             <button type="submit" 
                 disabled={messages.length >= MESSAGE_LIMIT ? true : false}
