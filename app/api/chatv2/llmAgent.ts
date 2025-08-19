@@ -22,7 +22,7 @@ async function getAvgTool() {
     });
     if (!avgToolInstance) {
         avgToolInstance = tool(
-            async ({ numbers }) => {
+            async ({ numbers }: { numbers: number[] }) => {
                 if (!Array.isArray(numbers) || numbers.length === 0) {
                     return 'No numbers provided.';
                 }
@@ -36,7 +36,7 @@ async function getAvgTool() {
                 schema: avgSchema,
                 responseFormat: "content_and_artifact"
             }
-        );
+        ) as any;
     }
     return avgToolInstance;
 }
@@ -47,7 +47,7 @@ async function getAdderTool() {
     })
     if (!adderToolInstance) {
         adderToolInstance = tool(
-            async ({ numbers }) => {
+            async ({ numbers }: { numbers: number[] }) => {
                 if (!Array.isArray(numbers) || numbers.length === 0) {
                     return 'No numbers provided.';
                 }
@@ -60,7 +60,7 @@ async function getAdderTool() {
                 schema: adderSchema,
                 responseFormat: "content_and_artifact"
             }
-        );
+        ) as any;
     }
     return adderToolInstance;
 }
@@ -75,7 +75,7 @@ async function getRetrieverTool() {
         })
         const vectorStore = await getPineconeStore();
         retrieverToolInstance = tool(
-            async ({query}) => {
+            async ({query}: { query: string }) => {
                 if (!vectorStore) return 'Vector store not available.';
                 const retrievedDocs = await vectorStore.similaritySearch(query, 4);
                 const serialized = retrievedDocs.map((doc) =>
@@ -90,7 +90,7 @@ async function getRetrieverTool() {
                 schema: retrieveSchema,
                 responseFormat: "content_and_artifact"
             }
-        );
+        ) as any;
     }
     return retrieverToolInstance;
 }

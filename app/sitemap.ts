@@ -23,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             lastModified: new Date(),
         },
         {
-            url: 'https://www.peterfan.dev/projects/chatbot',
+            url: 'https://www.peterfan.dev/projects/chatbot_v2',
             lastModified: new Date(),
         },
     ]
