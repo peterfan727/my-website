@@ -51,7 +51,7 @@ export default function ChatbotPage() {
             let aiResponse = '';
             while (true) {
                 const { done, value } = await reader.read();
-                console.log('Received chunk:', value);
+                // Received chunk: value (logging removed for production)
                 if (done) break;
                 aiResponse += new TextDecoder().decode(value);
                 setMessages((msgs) => {
