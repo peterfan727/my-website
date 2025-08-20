@@ -159,7 +159,7 @@ export default function Map( props: MapProps ) {
             inputText.type = "text";
             inputText.placeholder = "Enter a location";
             inputText.classList.add(styles.input)
-            inputText.addEventListener("keydown", (e) => {
+            inputText.addEventListener("keypress", (e) => {
                 if (e.key === "Enter") {
                     searchButton.click();
                 }

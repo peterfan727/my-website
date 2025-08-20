@@ -8,8 +8,8 @@ export default function ChatbotPage() {
     const [messages, setMessages] = useState([
         { 
             role: 'assistant', 
-            content: `Hi! I am Peter\'s AI chatbot. I can do multi-step reasoning and tool calling to help you 
-            with your questions. Tools availble currently are: RAG (retrieval augmented generation), number addition, 
+            content: `Hi! I am Peter's AI chatbot. I can do multi-step reasoning and tool calling to help you 
+            with your questions. Tools available currently are: RAG (retrieval augmented generation), number addition, 
             average calculation. Ask away!`
         },
     ]);
@@ -18,6 +18,7 @@ export default function ChatbotPage() {
     const [uuid, setUuid] = useState<string>(new Date().toISOString() + uuidv4());
 
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const aiResponseRef = useRef<string>('');
 
     useEffect(() => {
         // Scroll to the bottom when messages change
@@ -48,23 +49,23 @@ export default function ChatbotPage() {
             });
             if (!res.body) throw new Error('No response body');
             const reader = res.body.getReader();
-            let aiResponse = '';
+            aiResponseRef.current = '';
             while (true) {
                 const { done, value } = await reader.read();
                 // Received chunk: value (logging removed for production)
                 if (done) break;
-                aiResponse += new TextDecoder().decode(value);
+                aiResponseRef.current += new TextDecoder().decode(value);
                 setMessages((msgs) => {
                     // If last message is assistant, update it; otherwise, add new
                     if (msgs[msgs.length - 1]?.role === 'assistant') {
                         return [
                             ...msgs.slice(0, -1),
-                            { role: 'assistant', content: aiResponse },
+                            { role: 'assistant', content: aiResponseRef.current },
                         ];
                     } else {
                         return [
                             ...msgs,
-                            { role: 'assistant', content: aiResponse },
+                            { role: 'assistant', content: aiResponseRef.current },
                         ];
                     }
                 });
