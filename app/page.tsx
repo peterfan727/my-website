@@ -61,7 +61,7 @@ export default function HomePage() {
                     my-3 p-6 rounded drop-shadow-2xl
                     text-white bg-blue-600 hover:bg-blue-800 
                 ">
-                    🤖 Talk to My Chatbot &#40;LLM Agent!&#41;
+                    🤖 Talk to My Chatbot (LLM Agent!)
                 </div>
             </Link>
             <Map country={geo.countryCode} lat={geo.geoLat} long={geo.geoLong} />
