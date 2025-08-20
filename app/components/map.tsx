@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useCallback } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { MarkerClusterer } from "@googlemaps/markerclusterer"
 import { queryClient, useMapQuery, useAddMapHistory } from "./useMapQuery"
@@ -55,6 +55,8 @@ export default function Map( props: MapProps ) {
     // Hooks
     const mapRef = useRef<HTMLDivElement>(null);
     const [isNewSession, setIsNewSession] = useState(true)
+    const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral>({ lat: 49.2827, lng: -123.1207 });
+    const [mapZoom, setMapZoom] = useState(1);
 
     // Get map history from Firestore
     const {  data: history, isLoading: mapDataIsLoading, error: mapDataError } = useMapQuery()
@@ -66,30 +68,7 @@ export default function Map( props: MapProps ) {
     const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
     const geocoderRef = useRef<google.maps.Geocoder | null>(null);
     const uiDivRef = useRef<HTMLDivElement | null>(null);
-    const [mapInitialized, setMapInitialized] = useState(false);
 
-    // Effect: Initialize map as soon as mapRef is available, and update when history loads
-    useEffect(() => {
-        if (!mapRef.current || mapInitialized) return;
-        // If data is loading or errored, show map with no markers
-        if (mapDataIsLoading || !history || mapDataError) {
-            initMap(loader, []);
-            if (mapDataError) console.error(mapDataError);
-            setMapInitialized(true);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mapRef, mapDataIsLoading, history, mapDataError, mapInitialized]); // ESLint is safe to ignore for now, as initMap is a local function and not recreated on every render.
-
-    // Effect: When history loads, re-initialize map with markers
-    useEffect(() => {
-        if (!mapRef.current || !history || mapDataIsLoading || mapDataError) return;
-        initMap(loader, history);
-        setMapInitialized(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mapRef, history, mapDataIsLoading, mapDataError]); 
-
-    // return Map component
-    return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
 
 
     // Inner Functions
@@ -116,8 +95,9 @@ export default function Map( props: MapProps ) {
             });
     }
 
-    // Initialize and paint the map with objects
-    function initMap(loader: Loader, history: Coordinate[]) {
+    // Initialize and paint the map with objects. Memoize to avoid re-initialization.
+    const initMap = useCallback(
+        (history: Coordinate[]) => {
         // Load the Google Maps API
         loader
         .importLibrary('core')
@@ -129,21 +109,26 @@ export default function Map( props: MapProps ) {
             if (isNewSession) {
                 if (geoLat && geoLong) {
                     mapOptions.center = {lat: geoLat, lng: geoLong};
+                    setMapCenter(mapOptions.center);
                 }
                 else if (detectedCountry) {
                     await geocoderRef.current.geocode({ address: detectedCountry}, (results, status) => {
                         if (status === google.maps.GeocoderStatus.OK && results) {
                             const location = results[0].geometry.location;
                             mapOptions.center = { lat: location.lat(), lng: location.lng() }
+                            setMapCenter(mapOptions.center);
                         }
                     });
                 }
+            } else {
+                mapOptions.center = mapCenter;
+                mapOptions.zoom = mapZoom;
             }
             // Focus and add markers
             const { Map } = await loader.importLibrary('maps')
             mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_LEFT}
             mapCanvasRef.current = new Map(mapRef.current!, mapOptions);
-            populateMarkers(loader, mapCanvasRef.current, history)
+            populateMarkers(mapCanvasRef.current, history)
             // Orange pin for user's location
             const { AdvancedMarkerElement, PinElement} = await loader.importLibrary('marker');
             const pinBackground = new PinElement({
@@ -174,6 +159,11 @@ export default function Map( props: MapProps ) {
             inputText.type = "text";
             inputText.placeholder = "Enter a location";
             inputText.classList.add(styles.input)
+            inputText.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    searchButton.click();
+                }
+            });
             
             const searchButton = document.createElement("input");
             searchButton.type = "button";
@@ -208,8 +198,10 @@ export default function Map( props: MapProps ) {
                                 queryClient.invalidateQueries({
                                     queryKey: ['mapHistory']
                                 }).then(() => {
-                                    mapOptions.center = {lat:new_lat, lng:new_lng}
-                                    mapOptions.zoom = 8
+                                    setMapCenter({lat:new_lat, lng:new_lng})
+                                    // get current map zoom 
+                                    const currentZoom = mapCanvasRef.current?.getZoom() || 1;
+                                    setMapZoom(currentZoom);
                                     clearCursorMarker()
                                 }).then(() => {
                                     setIsNewSession(false)
@@ -227,9 +219,11 @@ export default function Map( props: MapProps ) {
             // do something
             console.error(e)
         });
-    }
+    }, // useCallback dependencies
+        [detectedCountry, geoLat, geoLong, addPin, isNewSession, mapCenter, mapZoom]
+    )
 
-    function populateMarkers(loader: Loader, map: google.maps.Map, history: Coordinate[]) {
+    function populateMarkers(map: google.maps.Map, history: Coordinate[]) {
         loader.importLibrary('core')
         .then( async () => {
             const { AdvancedMarkerElement } = await loader.importLibrary('marker');
@@ -239,4 +233,13 @@ export default function Map( props: MapProps ) {
             new MarkerClusterer({markers: oldMarkers, map: map})
         })
     }
+
+    // Effect: Initialize map as soon as mapRef is available, and update when history loads
+    useEffect(() => {
+        if (!mapRef.current) return;
+        initMap(history);
+    }, [mapRef, history, mapDataIsLoading, mapDataError, initMap]); 
+
+    // return Map component
+    return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
 }
