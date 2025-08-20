@@ -69,7 +69,11 @@ export default function Map( props: MapProps ) {
     const geocoderRef = useRef<google.maps.Geocoder | null>(null);
     const uiDivRef = useRef<HTMLDivElement | null>(null);
 
-
+    // Effect: Initialize map as soon as mapRef is available, and update when history loads
+    useEffect(() => {
+        if (!mapRef.current) return;
+        initMap(history);
+    }, [mapRef, history, mapDataIsLoading, mapDataError]); 
 
     // Inner Functions
     function clearCursorMarker() {
@@ -233,12 +237,6 @@ export default function Map( props: MapProps ) {
             new MarkerClusterer({markers: oldMarkers, map: map})
         })
     }
-
-    // Effect: Initialize map as soon as mapRef is available, and update when history loads
-    useEffect(() => {
-        if (!mapRef.current) return;
-        initMap(history);
-    }, [mapRef, history, mapDataIsLoading, mapDataError, initMap]); 
 
     // return Map component
     return <div style={{ width: "100%", height: "400px", minWidth: "20em"}} ref={mapRef} />;
