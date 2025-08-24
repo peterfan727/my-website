@@ -21,15 +21,15 @@ export default function AboutPage() {
             <h2 className="m-3">When I am not coding...</h2>
             <Card>
                 <p>
-                    I enjoy reading financial markets 📈 news and Japanese manga
-                    <br/>On weekends, I like go for a long hike 🥾 ⛰️ to clear my mind
+                    I enjoy reading financial markets 📈 news and Japanese manga.
+                    <br/>On weekends, I like go for a long hike 🥾 ⛰️ to clear my mind.
                 </p>
             </Card>
             <h2 className="m-3">People see me as...</h2>
             <Card>
                 <p>
-                    a helpful and resourceful friend and co-worker
-                    <br/>an adventurous traveller and open to trying new things
+                    a helpful and resourceful friend and co-worker. 
+                    <br/>an adventurous traveller and open to trying new things.
                 </p>
             </Card>
             <h2 className="m-3">🤓 My Education Background...</h2>
@@ -52,7 +52,7 @@ export default function AboutPage() {
             <Card>
                 <h3>Machine Learning</h3>
                 <p className="text-justify">
-                    In this golden age of Machine Learning (ML), I am captivated by the transformative potential it holds. 
+                    In this golden age of Machine Learning (ML), I am captivated by the transformative potential ML holds. 
                     Having seen this field grow from the early mass-adoption of recommendation systems to transformer models, 
                     the future of ML fascinates me.
                     I am eager to utilize my current knowledge and hands-on experience in ML to drive innovative solutions. 
