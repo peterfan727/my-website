@@ -41,3 +41,6 @@ next-env.d.ts
 # my private notes
 my_notes.md
 **/private_docs
+
+# compiled JS files for embedding
+app/projects/chatbot_v2/embedding/*.js 
