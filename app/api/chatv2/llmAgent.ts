@@ -7,7 +7,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { z } from 'zod';
 import { OpenAiEmbedding, GeminiEmbedding } from './Embeddings';
-import { V1_PC_INDEX_NAME, PC_INDEX_NAME } from '../../projects/chatbot_v2/embedding/Constants';
+import { V1_PC_INDEX_NAME, PC_INDEX_NAME } from '../../projects/chatbot_v2/Constants';
 
 // Singleton objects
 let memoryInstance: any = null;
