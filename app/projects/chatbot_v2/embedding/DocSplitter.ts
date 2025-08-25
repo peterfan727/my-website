@@ -54,13 +54,19 @@ export async function loadProjectPageDocs(): Promise<[string, Document[]]> {
 
 export async function loadTranscriptDocs(): Promise<[string, Document[]]> {
 	const transcriptDocs: Document[] = await transcriptTextLoader.load();
+	// It's better to also attach a non-split version of the transcript for larger context
+	let transcriptUnsplit = transcriptDocs.map((doc) => {
+		doc.metadata.source = "SFU Transcript";
+		doc.metadata.tags = ["courses", "grades", "academic history", "GPA", "degree"];
+		return doc;
+	});
 	let transcriptChunks = await transcriptSplitter.splitDocuments(transcriptDocs);
 	transcriptChunks = transcriptChunks.map((chunk) => {
 		chunk.metadata.source = "SFU Transcript";
 		chunk.metadata.tags = ["courses", "grades", "academic history", "GPA", "degree"];
 		return chunk;
-	});
-	return ["transcript", transcriptChunks];
+	})
+	return ["transcript", [...transcriptChunks, ...transcriptUnsplit]];
 }
 
 export async function loadResumeDocs(): Promise<[string, Document[]]> {

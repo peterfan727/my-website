@@ -37,11 +37,12 @@ export async function createVectorStore() {
             // Add documents to the Pinecone index
             PineconeStore.fromDocuments(docs, GeminiEmbedding, { 
                 pineconeIndex: index,
+                namespace: ns_docs[0]
             } as PineconeStoreParams).catch((e) => { 
                 console.error("Error creating PineconeStore from documents:", e); 
             }
             ).then(() => {
-                console.log(`Successfully added ${docs.length} documents.`);
+                console.log(`Successfully added ${docs.length} documents into namespace ${ns_docs[0]}`);
             });
         }
     })
