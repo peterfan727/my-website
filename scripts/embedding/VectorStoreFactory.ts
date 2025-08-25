@@ -3,7 +3,7 @@ import { PineconeStore, PineconeStoreParams } from "@langchain/pinecone";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { GeminiEmbedding } from "./Embeddings";
 import { PINECONE_API_KEY } from "./private_docs/ApiKeys";
-import { PC_INDEX_NAME } from "./Constants";
+import { PC_INDEX_NAME } from "../../app/projects/chatbot_v2/Constants";
 
 export let INDEX_HOST_NAME: string | null;
 
