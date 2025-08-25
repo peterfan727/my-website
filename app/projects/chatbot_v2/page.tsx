@@ -31,7 +31,7 @@ export default function Page() {
             <div className="mb-4">
                 <div className="mb-2 text-gray-700">
                     Choose between the old OpenAi-Ada-002 embedding and the new Gemini-embedding-001 to see how much improvement has been made in V2.
-                    <br/>For example, "What courses have Peter taken?" works much better with the new embedding.
+                    <br/>For example, &quot;What courses have Peter taken?&quot; works much better with the new embedding.
                 </div>
                 <select
                     className="border rounded px-2 py-1 bg-white"

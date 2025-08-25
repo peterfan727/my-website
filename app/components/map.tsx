@@ -73,7 +73,7 @@ export default function Map( props: MapProps ) {
     useEffect(() => {
         if (!mapRef.current) return;
         initMap(history);
-    }, [mapRef, history, mapDataIsLoading, mapDataError]); 
+    }, [mapRef, history, mapDataIsLoading, mapDataError]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     // Inner Functions
     function clearCursorMarker() {
