@@ -1,5 +1,6 @@
 "use client";
 
+import { init } from 'next/dist/compiled/webpack/webpack';
 import { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -23,7 +24,7 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
         setInput('');
         setUuid(new Date().toISOString() + uuidv4());
         setEmbeddingState(embedding);
-    }, [embedding]);
+    }, [embedding]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const aiResponseRef = useRef<string>('');
