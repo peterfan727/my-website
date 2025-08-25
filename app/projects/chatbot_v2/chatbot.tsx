@@ -4,18 +4,26 @@ import { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 
-export default function ChatbotPage() {
-    const [messages, setMessages] = useState([
-        { 
-            role: 'assistant', 
-            content: `Hi! I am Peter's AI chatbot. I can do multi-step reasoning and tool calling to help you 
-            with your questions. Tools available currently are: RAG (retrieval augmented generation), number addition, 
-            average calculation. Ask away!`
-        },
-    ]);
+// Accept embedding prop from parent
+export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: string }) {
+    const initialMessage = {
+        role: 'assistant',
+        content: `Hi! I am Peter's AI chatbot. I can do multi-step reasoning and tool calling to help you ` +
+        `with your questions. Tools available currently are: RAG (retrieval augmented generation), number ` + 
+        `addition, average calculation. Ask away!`
+    };
+    const [messages, setMessages] = useState([initialMessage]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [uuid, setUuid] = useState<string>(new Date().toISOString() + uuidv4());
+    const [embeddingState, setEmbeddingState] = useState<string>(embedding);
+    // Reset chat state when embedding changes
+    useEffect(() => {
+        setMessages([initialMessage]);
+        setInput('');
+        setUuid(new Date().toISOString() + uuidv4());
+        setEmbeddingState(embedding);
+    }, [embedding]);
 
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const aiResponseRef = useRef<string>('');
@@ -42,17 +50,18 @@ export default function ChatbotPage() {
             const res = await fetch('/api/chatv2', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    messages: newMessages, 
-                    llm: "gemini",
-                    threadId: uuid}), // Gemini is default on backend
+                body: JSON.stringify({
+                    messages: newMessages,
+                    llm: 'gemini',
+                    useV1: embeddingState === 'openai',
+                    threadId: uuid
+                }),
             });
             if (!res.body) throw new Error('No response body');
             const reader = res.body.getReader();
             aiResponseRef.current = '';
             while (true) {
                 const { done, value } = await reader.read();
-                // Received chunk: value (logging removed for production)
                 if (done) break;
                 aiResponseRef.current += new TextDecoder().decode(value);
                 setMessages((msgs) => {
@@ -96,7 +105,7 @@ export default function ChatbotPage() {
                                 : 'text-left mr-8 mb-2') // right margin for assistant
                         }
                     >
-                        <span
+                        <div
                             className={
                                 (m.role === 'user'
                                     ? 'bg-blue-100'
@@ -104,8 +113,15 @@ export default function ChatbotPage() {
                                 ' px-2 py-1 rounded inline-block text-left'
                             }
                         >
-                            {m.content}
-                        </span>
+                            {typeof m.content === 'string'
+                                ? m.content.split('\n').map((line, idx) => (
+                                    <span key={idx}>
+                                        {line}
+                                        {idx < m.content.split('\n').length - 1 && <br />}
+                                    </span>
+                                ))
+                                : m.content}
+                        </div>
                     </div>
                 ))}
                 {loading && <div className="text-gray-400">Chat Agent is thinking...</div>}

@@ -1,22 +1,21 @@
 import getPineconeStore from '../chat/getPineconeStore';
+import getPineconeStoreV2 from './getPineconeStoreV2';
 import { MemorySaver } from '@langchain/langgraph';
 import { createReactAgent } from '@langchain/langgraph/prebuilt';
 import { tool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { z } from 'zod';
-
+import { OpenAiEmbedding, GeminiEmbedding } from './Embeddings';
+import { V1_PC_INDEX_NAME, PC_INDEX_NAME } from '../../projects/chatbot_v2/embedding/Constants';
 
 // Singleton objects
-let agentInstance: any = null;
 let memoryInstance: any = null;
-let retrieverToolInstance: any = null;
 let adderToolInstance: any = null;
 let avgToolInstance: any = null;
-let llmInstance: any = null;
 
 
-async function getAvgTool() {
+function getAvgTool() {
     const avgSchema = z.object({
         numbers: z.array(z.number()),
     });
@@ -41,7 +40,7 @@ async function getAvgTool() {
     return avgToolInstance;
 }
 
-async function getAdderTool() {
+function getAdderTool() {
     const adderSchema = z.object({
         numbers: z.array(z.number()),
     })
@@ -65,70 +64,88 @@ async function getAdderTool() {
     return adderToolInstance;
 }
 
-async function getRetrieverTool() {
+async function getRetrieverTools(useV1: boolean) {
     /**
      * Performs a vector search using Pinecone to retrieve relevant documents.
-     */
-    if (!retrieverToolInstance) {
-        const retrieveSchema = z.object({
-            query: z.string(),
-        })
-        const vectorStore = await getPineconeStore();
-        retrieverToolInstance = tool(
+     */ 
+    const retrieveSchema = z.object({
+        query: z.string(),
+    })
+    let embedding = useV1 ? OpenAiEmbedding : GeminiEmbedding;
+    let indexName = useV1 ? V1_PC_INDEX_NAME : PC_INDEX_NAME;
+    const descriptionTemplate = (name: string, keyword: string) => {
+        return `Searches the ${name} for content related to Peter Fan, who can also be referred to as Chih-Chung Fan,` 
+        + ` Chih-Chung, or Peter. Use this tool to find specific information about Peter's ${keyword} in the document.`;
+    }
+    const rag_tools = [
+        { namespace: "resume", name: "search_resume", description: descriptionTemplate("resume", "resume-related information"), },
+        { namespace: "projects", name: "search_projects_page", description: descriptionTemplate("projects page", "coding projects"), },
+        { namespace: "about", name: "search_about_page", description: descriptionTemplate("about page", "introduction"), },
+        { namespace: "transcript", name: "search_transcript", description: descriptionTemplate("transcript", "courses"), }
+    ]
+    return await Promise.all(rag_tools.map(async (t) => {
+        let namespace = useV1 ? null : t.namespace;
+        let vectorStore = await getPineconeStoreV2(indexName, embedding, namespace);
+        return tool(
             async ({query}: { query: string }) => {
+                if (!vectorStore) console.error("Vector store is not initialized.");
                 if (!vectorStore) return 'Vector store not available.';
-                const retrievedDocs = await vectorStore.similaritySearch(query, 4);
-                const serialized = retrievedDocs.map((doc) =>
-                    `Source: ${doc.metadata.source}\nContent: ${doc.pageContent}`
-                ).join("\n");
+                const retrievedDocs = await vectorStore.similaritySearch(query, 10);
+                const serialized = retrievedDocs.map((doc) => {
+                    let tags = 'None';
+                    if (doc.metadata.tags) {
+                        if (Array.isArray(doc.metadata.tags)) {
+                            tags = doc.metadata.tags.join(', ');
+                        } else {
+                            tags = String(doc.metadata.tags);
+                        }
+                    }
+                    return `Source: ${doc.metadata.source} Content: ${doc.pageContent} Tags: ${tags} `;
+                }).join("\n");
                 return [serialized, retrievedDocs];
             },
             {
-                name: 'pinecone_search',
-                description: 'Searches documents relevant to information about Peter Fan, '
-                + 'who can also be referred to as Chih-Chung Fan, Chih-Chung, or Peter.',
+                name: t.name,
+                description: t.description,
                 schema: retrieveSchema,
                 responseFormat: "content_and_artifact"
             }
         ) as any;
-    }
-    return retrieverToolInstance;
+    }))
+       
 }
 
-export async function getAgent(llmType: 'gemini' | 'openai' = 'gemini') {
+export async function getAgent(llmType: 'gemini' | 'openai' = 'gemini', useV1: boolean = false) {
     if (!memoryInstance) memoryInstance = new MemorySaver();
-    if (!llmInstance) {
-        if (llmType === 'gemini') {
-            llmInstance = new ChatGoogleGenerativeAI({
-                apiKey: process.env.GOOGLE_API_KEY,
-                streaming: true,
-                model: 'gemini-2.5-flash',
-            });
-        } else {
-            llmInstance = new ChatOpenAI({
-                openAIApiKey: process.env.OPENAI_API_KEY,
-                streaming: true,
-                modelName: 'gpt-5-mini',
-            });
-        }
+    let llmInstance: any = null;
+    if (llmType === 'gemini') {
+        llmInstance = new ChatGoogleGenerativeAI({
+            apiKey: process.env.GOOGLE_API_KEY,
+            streaming: true,
+            model: 'gemini-2.5-flash',
+        });
+    } else {
+        llmInstance = new ChatOpenAI({
+            openAIApiKey: process.env.OPENAI_API_KEY,
+            streaming: true,
+            modelName: 'gpt-5-mini',
+        });
     }
 
-    const retrieverTool = await getRetrieverTool();
-    const adderTool = await getAdderTool();
-    const avgTool = await getAvgTool();
+    const retrievalTools = await getRetrieverTools(useV1);
+    const adderTool = getAdderTool();
+    const avgTool = getAvgTool();
     
-    if (!agentInstance) {
-        agentInstance = createReactAgent({
+    const agentInstance = createReactAgent({
             llm: llmInstance,
-            tools: [retrieverTool, adderTool, avgTool],
+            tools: [...retrievalTools, adderTool, avgTool],
             checkpointer: memoryInstance,
             prompt: CUSTOM_QA_PROMPT_TEMPLATE,
         });
-    }
     return { 
         agent: agentInstance, 
         memory: memoryInstance, 
-        llm: llmInstance, retrieverTool 
+        llm: llmInstance
     };
 }
 
@@ -156,5 +173,8 @@ Context about Peter:
 
 For undefined questions, use the chat history and context to generate a question that would be appropriate to ask the visitor.
 Question: {question}
+
+Cleanly Format your response in plaintext. Use new lines to separate different parts of your answer. Use bullet points if necessary and separate them with new lines.
+
 Helpful and polite answer that will help Peter impress the person:
 `;
