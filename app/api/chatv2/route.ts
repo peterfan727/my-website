@@ -4,25 +4,21 @@ import { AIMessage, AIMessageChunk, HumanMessage } from '@langchain/core/message
 
 export async function POST(req: NextRequest) {
     // Parse user query from request
-    const { messages, llm, threadId } = await req.json(); // llm: 'openai' | 'gemini'
+    const { messages, llm, threadId, useV1 } = await req.json(); // llm: 'openai' | 'gemini', useV1: boolean
     console.log("Query:", messages);
     // Convert incoming messages to Langchain message format
     const lcMessages = messages.map((m: any) => {
         if (m.role === 'user') {
-            // console.log("User message:", m.content);
             return new HumanMessage(m.content);
         } else if (m.role === 'assistant') {
-            // console.log("Assistant message:", m.content);
             return new AIMessage(m.content);
         }
-        // Optionally handle system or other roles
         return null;
     }).filter(Boolean);
 
     const query: HumanMessage = lcMessages.findLast((msg: HumanMessage | AIMessage) => msg instanceof HumanMessage);
     // Get persistent agent, memory, llm, and retrieverTool
-    const { agent } = await getAgent(llm === 'openai' ? 'openai' : 'gemini');
-
+    const { agent } = await getAgent(llm === 'openai' ? 'openai' : 'gemini', !!useV1);
 
     // Create a ReadableStream from the agent's async iterator
     const threadConfig = {
