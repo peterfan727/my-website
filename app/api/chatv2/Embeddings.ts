@@ -9,6 +9,6 @@ export const OpenAiEmbedding = new OpenAIEmbeddings({
 
 export const GeminiEmbedding = new GoogleGenerativeAIEmbeddings({
         apiKey: process.env.GOOGLE_API_KEY,
-        taskType: TaskType.RETRIEVAL_DOCUMENT,
+        taskType: TaskType.RETRIEVAL_QUERY,
         model: "gemini-embedding-001",
     });
