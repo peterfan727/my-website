@@ -32,7 +32,7 @@ function getAvgTool() {
             {
                 name: 'average_calculator',
                 description: 'Calculates the average of a list of numbers.',
-                schema: avgSchema,
+                schema: avgSchema as any,
                 responseFormat: "content_and_artifact"
             }
         ) as any;
@@ -56,7 +56,7 @@ function getAdderTool() {
             {
                 name: 'adder',
                 description: 'Adds multiple numbers together.',
-                schema: adderSchema,
+                schema: adderSchema as any,
                 responseFormat: "content_and_artifact"
             }
         ) as any;
@@ -67,15 +67,15 @@ function getAdderTool() {
 async function getRetrieverTools(useV1: boolean) {
     /**
      * Performs a vector search using Pinecone to retrieve relevant documents.
-     */ 
+     */
     const retrieveSchema = z.object({
         query: z.string(),
     })
     let embedding = useV1 ? OpenAiEmbedding : GeminiEmbedding;
     let indexName = useV1 ? V1_PC_INDEX_NAME : PC_INDEX_NAME;
     const descriptionTemplate = (name: string, keyword: string) => {
-        return `Searches the ${name} for content related to Peter Fan, who can also be referred to as Chih-Chung Fan,` 
-        + ` Chih-Chung, or Peter. Use this tool to find specific information about Peter's ${keyword} in the document.`;
+        return `Searches the ${name} for content related to Peter Fan, who can also be referred to as Chih-Chung Fan,`
+            + ` Chih-Chung, or Peter. Use this tool to find specific information about Peter's ${keyword} in the document.`;
     }
     const rag_tools = [
         { namespace: "resume", name: "search_resume", description: descriptionTemplate("resume", "resume-related information"), },
@@ -87,7 +87,7 @@ async function getRetrieverTools(useV1: boolean) {
         let namespace = useV1 ? null : t.namespace;
         let vectorStore = await getPineconeStoreV2(indexName, embedding, namespace);
         return tool(
-            async ({query}: { query: string }) => {
+            async ({ query }: { query: string }) => {
                 if (!vectorStore) console.error("Vector store is not initialized.");
                 if (!vectorStore) return 'Vector store not available.';
                 const retrievedDocs = await vectorStore.similaritySearch(query, 10);
@@ -107,12 +107,12 @@ async function getRetrieverTools(useV1: boolean) {
             {
                 name: t.name,
                 description: t.description,
-                schema: retrieveSchema,
+                schema: retrieveSchema as any,
                 responseFormat: "content_and_artifact"
             }
         ) as any;
     }))
-       
+
 }
 
 export async function getAgent(llmType: 'gemini' | 'openai' = 'gemini', useV1: boolean = false) {
@@ -135,16 +135,16 @@ export async function getAgent(llmType: 'gemini' | 'openai' = 'gemini', useV1: b
     const retrievalTools = await getRetrieverTools(useV1);
     const adderTool = getAdderTool();
     const avgTool = getAvgTool();
-    
+
     const agentInstance = createReactAgent({
-            llm: llmInstance,
-            tools: [...retrievalTools, adderTool, avgTool],
-            checkpointer: memoryInstance,
-            prompt: CUSTOM_QA_PROMPT_TEMPLATE,
-        });
-    return { 
-        agent: agentInstance, 
-        memory: memoryInstance, 
+        llm: llmInstance,
+        tools: [...retrievalTools, adderTool, avgTool],
+        checkpointer: memoryInstance,
+        prompt: CUSTOM_QA_PROMPT_TEMPLATE,
+    });
+    return {
+        agent: agentInstance,
+        memory: memoryInstance,
         llm: llmInstance
     };
 }
