@@ -35,7 +35,7 @@
     "eslint-config-next": "^15.4.6",
     "firebase": "^12.1.0",
     "glob": "^11.1.0",
-    "langchain": "^0.3.30",
+    "langchain": "^0.3.37",
     "next": "^15.5.9",
     "path-to-regexp": "^8.3.0",
     "postcss": "^8.5.6",
