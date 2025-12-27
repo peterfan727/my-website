@@ -30,6 +30,7 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
       NEXT_PUBLIC_GOOGLE_MAP_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAP_ID }}
+      PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
       # Add other public env vars if needed
     steps:
     - uses: actions/checkout@v4
