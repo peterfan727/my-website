@@ -5,7 +5,7 @@ import { AIMessage, AIMessageChunk, HumanMessage } from '@langchain/core/message
 export async function POST(req: NextRequest) {
     // Parse user query from request
     const { messages, llm, threadId, useV1 } = await req.json(); // llm: 'openai' | 'gemini', useV1: boolean
-    console.log("Query:", messages);
+    // console.log("Query:", messages);
     // Convert incoming messages to Langchain message format
     const lcMessages = messages.map((m: any) => {
         if (m.role === 'user') {
@@ -28,19 +28,19 @@ export async function POST(req: NextRequest) {
 
     const stream = new ReadableStream({
         async start(controller) {
-            for await (const step of await agent.stream({messages: query}, threadConfig)) {
+            for await (const step of await agent.stream({ messages: query }, threadConfig)) {
                 if (step[0] === 'messages') {
                     const valuesArr = Array.from(step[1].values());
                     for (const msg of valuesArr) {
                         // console.log("Message:", msg);
                         if (msg instanceof AIMessageChunk && typeof msg.content === 'string' && msg.content.length > 0) {
                             controller.enqueue(msg.content);
-                        } 
+                        }
                     }
                 }
-				if (step[0] === 'values') {
-					// console.log("Values:", step[1]); Disabled for production
-				}
+                if (step[0] === 'values') {
+                    // console.log("Values:", step[1]); Disabled for production
+                }
             }
             controller.close();
         }

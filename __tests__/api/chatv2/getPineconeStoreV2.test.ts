@@ -37,6 +37,7 @@ describe('getPineconeStoreV2', () => {
     })
 
     it('returns null if index does not exist', async () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { })
         const listIndexesMock = jest.fn().mockReturnValue(Promise.resolve({ indexes: [{ name: 'other-index' }] }))
         // @ts-ignore
         Pinecone.mockImplementation(() => ({
@@ -45,6 +46,8 @@ describe('getPineconeStoreV2', () => {
 
         const store = await getPineconeStoreV2('target-index', {} as any, null)
         expect(store).toBeNull()
+        expect(consoleSpy).toHaveBeenCalledWith('no index found')
+        consoleSpy.mockRestore()
     })
 
     it('returns store if index exists', async () => {
