@@ -30,7 +30,7 @@ describe('Page', () => {
         expect(heading).toHaveTextContent('👋 Hello! Bonjour! Hola! 你好!')
 
         // Wait for the async effect to complete to avoid act() warnings
-        await screen.findByText(/Visitor from San Francisco, US 🇺🇸!/i)
+        await screen.findByText(/Visitor from San Francisco, US/i)
     })
 
     it('renders the chatbot link', async () => {
@@ -39,6 +39,6 @@ describe('Page', () => {
         expect(link).toBeInTheDocument()
 
         // Wait for the async effect to complete to avoid act() warnings
-        await screen.findByText(/Visitor from San Francisco, US 🇺🇸!/i)
+        await screen.findByText(/Visitor from San Francisco, US/i)
     })
 })

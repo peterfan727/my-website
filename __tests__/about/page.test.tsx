@@ -23,8 +23,8 @@ describe('AboutPage', () => {
 
     it('renders interests', () => {
         render(<AboutPage />)
-        expect(screen.getByText('Machine Learning')).toBeInTheDocument()
-        expect(screen.getByText('Bioinformatics')).toBeInTheDocument()
-        expect(screen.getByText('Microservices')).toBeInTheDocument()
+        expect(screen.getByText(/AI Engineering & Agentic Workflows/i)).toBeInTheDocument()
+        expect(screen.getByText(/Computational Science & Data Analytics/i)).toBeInTheDocument()
+        expect(screen.getByText(/Distributed Systems & Cloud-Native Architecture/i)).toBeInTheDocument()
     })
 })

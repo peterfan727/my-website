@@ -38,8 +38,10 @@ describe('Navbar', () => {
 
         render(<Navbar />)
 
-        // Should show current page label (Home based on mocked pathname)
-        expect(screen.getByText('Home ▼')).toBeInTheDocument()
+        // Should show current page label (Home based on mocked pathname)  
+        expect(screen.getByText('Home')).toBeInTheDocument()
+        // Should have a button toggle with chevron
+        expect(screen.getByRole('button')).toBeInTheDocument()
 
         // Should be in a nav col
         const nav = screen.getByRole('navigation')
@@ -50,7 +52,7 @@ describe('Navbar', () => {
         (useMediaQuery as jest.Mock).mockReturnValue(false)
         render(<Navbar />)
 
-        const toggleButton = screen.getByText('Home ▼')
+        const toggleButton = screen.getByRole('button')
         fireEvent.click(toggleButton)
 
         const links = ['Home', 'About', 'Experience', 'Projects', 'Contact']

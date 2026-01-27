@@ -1,28 +1,25 @@
 type CardProps = {
     children: React.ReactNode;
     className?: string;
-  };
+};
 
 /**
- * A reusable card component.
- * @param \{children : React.ReactNode, className? : string} : CardProps
+ * A modern glassmorphic card component with hover effects.
+ * @param {children : React.ReactNode, className? : string} : CardProps
  * @returns JSX.Element
  */
 export default function Card({ children, className }: CardProps) {
     return (
         <div className={`
+            glass-card
             flex flex-col 
             justify-center items-center 
-            w-full h-full 
-            rounded
-            drop-shadow-lg
-            py-3 px-6 m-3
-            bg-sky-100 
-            text-black
-            transition-colors duration-300
+            w-full
+            py-6 px-8 my-4
+            animate-fade-in-up
             ${className ? ' ' + className : ''}
         `}>
-        {children}
+            {children}
         </div>
     )
 }

@@ -10,7 +10,7 @@ describe('ContactPage', () => {
 
     it('renders the LinkedIn link', () => {
         render(<ContactPage />)
-        const link = screen.getByRole('link', { name: /Please reach me through LinkedIn!/i })
+        const link = screen.getByRole('link', { name: /Connect on LinkedIn/i })
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute('href', 'https://ca.linkedin.com/in/cc-peter-fan')
     })
