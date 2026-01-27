@@ -27,8 +27,8 @@ export default function AboutPage() {
             <h2 className="mt-8 mb-4 animate-fade-in-up delay-3">When I am not coding...</h2>
             <Card className="delay-3">
                 <p className="text-center">
-                    I am an avid gym-goer. Healthy body, healthy mind.️
-                    <br />On weekends, I like go for a drive to clear my mind.
+                    I am an avid gym-goer. Healthy body, healthy mind.
+                    <br />On weekends, I like to go for a drive to clear my mind.
                 </p>
             </Card>
 
