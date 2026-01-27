@@ -29,8 +29,10 @@ export const metadata = {
   applicationName: 'Peter Fan | Developer Portfolio',
   referrer: 'origin-when-cross-origin',
   keywords: ['Peter Fan', 'Chih-Chung Fan', 'Portfolio'],
-  authors: [{ name: 'Chih-Chung Fan', url: 'https://www.peterfan.dev' },
-  { name: 'Peter Fan', url: 'https://www.peterfan.dev' }],
+  authors: [
+    { name: 'Chih-Chung Fan', url: 'https://www.peterfan.dev' },
+    { name: 'Peter Fan', url: 'https://www.peterfan.dev' },
+  ],
   // colorScheme: 'dark',
   creator: 'Chih-Chung Fan',
   // publisher: '',
