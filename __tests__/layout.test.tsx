@@ -7,7 +7,8 @@ jest.mock('../app/globals.css', () => ({}))
 
 // Mock font
 jest.mock('next/font/google', () => ({
-    Ubuntu: () => ({ variable: 'mock-font' })
+    Ubuntu: () => ({ variable: 'mock-font' }),
+    Inter: () => ({ variable: 'mock-inter' })
 }))
 
 // Mock components

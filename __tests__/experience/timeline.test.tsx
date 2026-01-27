@@ -44,8 +44,9 @@ describe('Timeline', () => {
         const companyLink = screen.getByRole('link', { name: /Test Company 1/i })
         expect(companyLink).toHaveAttribute('href', 'https://test1.com')
 
-        // Check duration
-        expect(screen.getByText(/Jan 2023 \(1 year\)/)).toBeInTheDocument()
+        // Check duration (new format uses bullet separator, two positions both have "1 year")
+        expect(screen.getAllByText(/Jan 2023/)[0]).toBeInTheDocument()
+        expect(screen.getAllByText(/1 year/).length).toBeGreaterThan(0)
 
         // Check description
         expect(screen.getByText('Description of Test Job 1')).toBeInTheDocument()

@@ -11,7 +11,7 @@ describe('Card', () => {
     it('applies default classes', () => {
         const { container } = render(<Card>Content</Card>)
         const div = container.firstChild as HTMLElement
-        expect(div).toHaveClass('flex', 'flex-col', 'rounded', 'drop-shadow-lg', 'bg-sky-100')
+        expect(div).toHaveClass('glass-card', 'flex', 'flex-col')
     })
 
     it('applies additional className prop', () => {
