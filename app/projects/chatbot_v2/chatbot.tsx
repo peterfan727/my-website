@@ -1,53 +1,101 @@
 "use client";
 
-import { init } from 'next/dist/compiled/webpack/webpack';
 import { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
+// Helper to get storage keys
+const getStorageKeys = (embeddingType: string) => ({
+    uuid: `chatbot_v2_uuid_${embeddingType}`,
+    messages: `chatbot_v2_messages_${embeddingType}`,
+});
+
+const getInitialMessage = () => ({
+    role: 'assistant',
+    content: `Hi! I am Peter's AI chatbot. I can do multi-step reasoning and tool calling to help you ` +
+        `with your questions. Tools available currently are: RAG (retrieval augmented generation), number ` +
+        `addition, average calculation. Ask away!`
+});
 
 // Accept embedding prop from parent
 export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: string }) {
-    const initialMessage = {
-        role: 'assistant',
-        content: `Hi! I am Peter's AI chatbot. I can do multi-step reasoning and tool calling to help you ` +
-            `with your questions. Tools available currently are: RAG (retrieval augmented generation), number ` +
-            `addition, average calculation. Ask away!`
-    };
-    const [messages, setMessages] = useState([initialMessage]);
+    const initialMessage = getInitialMessage();
+
+    // Lazy initialization: read from localStorage during first render
+    const [messages, setMessages] = useState<Array<{ role: string, content: string }>>(() => {
+        if (typeof window === 'undefined') return [initialMessage];
+        const keys = getStorageKeys(embedding);
+        const stored = localStorage.getItem(keys.messages);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            } catch (e) {
+                console.error('Failed to parse stored messages:', e);
+            }
+        }
+        return [initialMessage];
+    });
+
+    const [uuid, setUuid] = useState<string>(() => {
+        if (typeof window === 'undefined') return '';
+        const keys = getStorageKeys(embedding);
+        let stored = localStorage.getItem(keys.uuid);
+        if (!stored) {
+            stored = new Date().toISOString() + uuidv4();
+            localStorage.setItem(keys.uuid, stored);
+        }
+        return stored;
+    });
+
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [uuid, setUuid] = useState<string>('');
     const [embeddingState, setEmbeddingState] = useState<string>(embedding);
+    const isInitialized = useRef(true); // Already initialized via lazy state
 
-    // Initialize UUID from localStorage on mount (per embedding type)
+    // Handle embedding switch - restore that embedding's UUID and messages
     useEffect(() => {
-        const storageKey = `chatbot_v2_uuid_${embedding}`;
-        const storedUuid = localStorage.getItem(storageKey);
-        if (storedUuid) {
-            setUuid(storedUuid);
+        if (embeddingState === embedding) return;
+
+        const keys = getStorageKeys(embedding);
+
+        // Restore or create UUID for this embedding
+        let currentUuid = localStorage.getItem(keys.uuid);
+        if (!currentUuid) {
+            currentUuid = new Date().toISOString() + uuidv4();
+            localStorage.setItem(keys.uuid, currentUuid);
+        }
+        setUuid(currentUuid);
+
+        // Restore messages for this embedding, or reset to initial
+        const storedMessages = localStorage.getItem(keys.messages);
+        if (storedMessages) {
+            try {
+                const parsed = JSON.parse(storedMessages);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setMessages(parsed);
+                } else {
+                    setMessages([initialMessage]);
+                }
+            } catch (e) {
+                setMessages([initialMessage]);
+            }
         } else {
-            const newUuid = new Date().toISOString() + uuidv4();
-            localStorage.setItem(storageKey, newUuid);
-            setUuid(newUuid);
+            setMessages([initialMessage]);
         }
-    }, []);
 
-    // Reset chat state when embedding changes
-    useEffect(() => {
-        const storageKey = `chatbot_v2_uuid_${embedding}`;
-        const storedUuid = localStorage.getItem(storageKey);
-        if (storedUuid && embeddingState === embedding) {
-            // Same embedding, keep existing UUID
-            return;
-        }
-        // Different embedding, reset everything
-        setMessages([initialMessage]);
         setInput('');
-        const newUuid = new Date().toISOString() + uuidv4();
-        localStorage.setItem(storageKey, newUuid);
-        setUuid(newUuid);
         setEmbeddingState(embedding);
-    }, [embedding]);  // eslint-disable-line react-hooks/exhaustive-deps
+    }, [embedding]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Persist messages to localStorage whenever they change
+    useEffect(() => {
+        if (embeddingState && messages.length > 0) {
+            const keys = getStorageKeys(embeddingState);
+            localStorage.setItem(keys.messages, JSON.stringify(messages));
+        }
+    }, [messages, embeddingState]);
 
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const aiResponseRef = useRef<string>('');
@@ -113,9 +161,30 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
         }
     }
 
+    function resetConversation() {
+        const newUuid = new Date().toISOString() + uuidv4();
+        const keys = getStorageKeys(embeddingState);
+
+        // Clear localStorage and set new UUID
+        localStorage.setItem(keys.uuid, newUuid);
+        localStorage.setItem(keys.messages, JSON.stringify([initialMessage]));
+
+        // Reset state
+        setUuid(newUuid);
+        setMessages([initialMessage]);
+        setInput('');
+    }
+
     return (
         <div className="w-full mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Chatbot</h1>
+            <h1 className="text-2xl font-bold mb-2">Chatbot</h1>
+            <button
+                onClick={resetConversation}
+                className="bg-red-200 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors mb-4"
+                title="Clear conversation and start fresh"
+            >
+                Reset Conversation
+            </button>
             <div
                 ref={chatContainerRef}
                 className="w-full h-96 overflow-y-auto border rounded p-4 bg-white mb-4 flex flex-col"
