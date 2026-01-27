@@ -126,5 +126,116 @@ test.describe('Chatbot V2', () => {
             expect(responseText).not.toContain('error');
         });
     }
+
+    test('persists conversation history across navigation', async ({ page }) => {
+        // Clear localStorage first to ensure clean state
+        await page.goto('/projects/chatbot_v2');
+        await page.evaluate(() => {
+            localStorage.removeItem('chatbot_v2_messages_gemini');
+            localStorage.removeItem('chatbot_v2_uuid_gemini');
+        });
+        await page.reload();
+        await page.waitForTimeout(500);
+
+        // Send a message
+        const testMessage = 'Persistence test message';
+        await page.getByPlaceholder('Type your message...').fill(testMessage);
+        await page.getByRole('button', { name: 'Send' }).click();
+        await expect(page.getByText(testMessage)).toBeVisible();
+
+        // Wait for AI response
+        const responseLocator = page.locator('.bg-gray-100').nth(1);
+        await expect(responseLocator).toBeVisible({ timeout: 45000 });
+
+        // Navigate away
+        await page.goto('/projects');
+        await expect(page).toHaveURL(/.*projects$/);
+
+        // Navigate back
+        await page.goto('/projects/chatbot_v2');
+        await page.waitForTimeout(500);
+
+        // Verify message is still there
+        await expect(page.getByText(testMessage)).toBeVisible();
+    });
+
+    test('reset button clears conversation', async ({ page }) => {
+        await page.goto('/projects/chatbot_v2');
+        await page.waitForTimeout(500);
+
+        // Send a message
+        const testMessage = 'Message to be reset';
+        await page.getByPlaceholder('Type your message...').fill(testMessage);
+        await page.getByRole('button', { name: 'Send' }).click();
+        await expect(page.getByText(testMessage)).toBeVisible();
+
+        // Wait for AI response
+        const responseLocator = page.locator('.bg-gray-100').nth(1);
+        await expect(responseLocator).toBeVisible({ timeout: 45000 });
+
+        // Click reset button
+        await page.getByRole('button', { name: 'Reset Conversation' }).click();
+        await page.waitForTimeout(500);
+
+        // Verify message is gone and only initial greeting remains
+        await expect(page.getByText(testMessage)).not.toBeVisible();
+        await expect(page.getByText("Hi! I am Peter's AI chatbot")).toBeVisible();
+
+        // Verify only one message bubble (the initial greeting)
+        const messageBubbles = page.locator('.bg-gray-100, .bg-blue-100');
+        await expect(messageBubbles).toHaveCount(1);
+    });
+
+    test('persists separate histories for each embedding model', async ({ page }) => {
+        // Clear localStorage for both models
+        await page.goto('/projects/chatbot_v2');
+        await page.evaluate(() => {
+            localStorage.removeItem('chatbot_v2_messages_gemini');
+            localStorage.removeItem('chatbot_v2_uuid_gemini');
+            localStorage.removeItem('chatbot_v2_messages_openai');
+            localStorage.removeItem('chatbot_v2_uuid_openai');
+        });
+        await page.reload();
+        await page.waitForTimeout(500);
+
+        // Send message with Gemini (default)
+        const geminiMessage = 'Gemini specific message';
+        await page.getByPlaceholder('Type your message...').fill(geminiMessage);
+        await page.getByRole('button', { name: 'Send' }).click();
+
+        // Verify user message is visible (in blue bubble)
+        await expect(page.locator('.bg-blue-100').getByText(geminiMessage, { exact: true })).toBeVisible();
+
+        // Wait for response
+        await expect(page.locator('.bg-gray-100').nth(1)).toBeVisible({ timeout: 45000 });
+
+        // Switch to OpenAI - this causes a page reload via URL change
+        await page.getByRole('combobox').selectOption('openai');
+        await expect(page).toHaveURL(/.*embedding=openai/);
+        await page.waitForTimeout(1000);
+
+        // Verify Gemini message is NOT visible (different model history)
+        await expect(page.locator('.bg-blue-100').getByText(geminiMessage, { exact: true })).not.toBeVisible();
+
+        // Send message with OpenAI
+        const openaiMessage = 'OpenAI specific message';
+        await page.getByPlaceholder('Type your message...').fill(openaiMessage);
+        await page.getByRole('button', { name: 'Send' }).click();
+
+        // Verify user message is visible (in blue bubble)
+        await expect(page.locator('.bg-blue-100').getByText(openaiMessage, { exact: true })).toBeVisible();
+
+        // Wait for response
+        await expect(page.locator('.bg-gray-100').nth(1)).toBeVisible({ timeout: 45000 });
+
+        // Switch back to Gemini
+        await page.getByRole('combobox').selectOption('gemini');
+        await expect(page).toHaveURL(/.*embedding=gemini/);
+        await page.waitForTimeout(1000);
+
+        // Verify Gemini message is back (in blue bubble) and OpenAI message is not visible
+        await expect(page.locator('.bg-blue-100').getByText(geminiMessage, { exact: true })).toBeVisible();
+        await expect(page.locator('.bg-blue-100').getByText(openaiMessage, { exact: true })).not.toBeVisible();
+    });
 });
 
