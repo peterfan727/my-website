@@ -1,16 +1,17 @@
 type CardProps = {
     children: React.ReactNode;
     className?: string;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 /**
  * A modern glassmorphic card component with hover effects.
  * @param {children : React.ReactNode, className? : string} : CardProps
  * @returns JSX.Element
  */
-export default function Card({ children, className }: CardProps) {
+export default function Card({ children, className, ...rest }: CardProps) {
     return (
-        <div className={`
+        <div
+            className={`
             glass-card
             flex flex-col 
             justify-center items-center 
@@ -18,7 +19,9 @@ export default function Card({ children, className }: CardProps) {
             py-6 px-8 my-4
             animate-fade-in-up
             ${className ? ' ' + className : ''}
-        `}>
+        `}
+            {...rest}
+        >
             {children}
         </div>
     )

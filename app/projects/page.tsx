@@ -12,7 +12,13 @@ export default function ProjectPage() {
         const isDisabled = !p.href;
 
         return (
-            <Card key={p.name} className={`delay-${idx + 1}`}>
+            <Card
+                key={p.name}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${idx * 100}ms` }}
+                aria-disabled={isDisabled}
+                aria-label={isDisabled ? `${p.name} - Currently unavailable` : p.name}
+            >
                 {/* Project Header */}
                 <h2 className='w-full text-xl font-bold text-slate-700 mb-4'>
                     {p.name}
@@ -32,12 +38,12 @@ export default function ProjectPage() {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                             </div>
-                            <button className="btn-primary w-full">
+                            <span className="btn-primary w-full block text-center">
                                 {p.buttonDescription}
-                            </button>
+                            </span>
                         </Link>
                     ) : (
-                        <div className="opacity-60">
+                        <div className="opacity-60" role="status" aria-label="Project unavailable">
                             <div className="relative overflow-hidden rounded-xl mb-4">
                                 <Image
                                     className="w-full h-auto grayscale"

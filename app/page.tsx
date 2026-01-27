@@ -59,10 +59,8 @@ export default function HomePage() {
 
             {/* CTA Button */}
             <section className="py-6 animate-fade-in-up delay-3">
-                <Link href="/projects/chatbot_v2">
-                    <button className="btn-primary text-lg">
-                        🤖 Talk to My Chatbot (LLM Agent!)
-                    </button>
+                <Link href="/projects/chatbot_v2" className="btn-primary text-lg inline-block">
+                    🤖 Talk to My Chatbot (LLM Agent!)
                 </Link>
             </section>
 
