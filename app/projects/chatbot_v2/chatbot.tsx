@@ -10,19 +10,42 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
     const initialMessage = {
         role: 'assistant',
         content: `Hi! I am Peter's AI chatbot. I can do multi-step reasoning and tool calling to help you ` +
-        `with your questions. Tools available currently are: RAG (retrieval augmented generation), number ` + 
-        `addition, average calculation. Ask away!`
+            `with your questions. Tools available currently are: RAG (retrieval augmented generation), number ` +
+            `addition, average calculation. Ask away!`
     };
     const [messages, setMessages] = useState([initialMessage]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [uuid, setUuid] = useState<string>(new Date().toISOString() + uuidv4());
+    const [uuid, setUuid] = useState<string>('');
     const [embeddingState, setEmbeddingState] = useState<string>(embedding);
+
+    // Initialize UUID from localStorage on mount (per embedding type)
+    useEffect(() => {
+        const storageKey = `chatbot_v2_uuid_${embedding}`;
+        const storedUuid = localStorage.getItem(storageKey);
+        if (storedUuid) {
+            setUuid(storedUuid);
+        } else {
+            const newUuid = new Date().toISOString() + uuidv4();
+            localStorage.setItem(storageKey, newUuid);
+            setUuid(newUuid);
+        }
+    }, []);
+
     // Reset chat state when embedding changes
     useEffect(() => {
+        const storageKey = `chatbot_v2_uuid_${embedding}`;
+        const storedUuid = localStorage.getItem(storageKey);
+        if (storedUuid && embeddingState === embedding) {
+            // Same embedding, keep existing UUID
+            return;
+        }
+        // Different embedding, reset everything
         setMessages([initialMessage]);
         setInput('');
-        setUuid(new Date().toISOString() + uuidv4());
+        const newUuid = new Date().toISOString() + uuidv4();
+        localStorage.setItem(storageKey, newUuid);
+        setUuid(newUuid);
         setEmbeddingState(embedding);
     }, [embedding]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -101,7 +124,7 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
                     <div
                         key={i}
                         className={
-                            (m.role === 'user' 
+                            (m.role === 'user'
                                 ? 'text-right ml-8 mb-2' // left margin for user
                                 : 'text-left mr-8 mb-2') // right margin for assistant
                         }
