@@ -65,7 +65,7 @@
   },
   "overrides": {
     "undici": ">=5.29.0",
-    "tar": ">=7.5.3",
+    "tar": ">=7.5.7",
     "@vercel/node": {
       "path-to-regexp": ">=6.3.0"
     },
