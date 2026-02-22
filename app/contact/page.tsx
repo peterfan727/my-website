@@ -40,7 +40,7 @@ export default function ContactPage() {
             {/* Additional Contact Info */}
             <Card className="delay-2">
                 <p className="text-slate-500 text-sm">
-                    📍 Based in Vancouver, BC, Canada
+                    📍 Based in Canada
                     <br />
                     🌐 Open to remote opportunities worldwide
                 </p>
