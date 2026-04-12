@@ -20,43 +20,17 @@ const getInitialMessage = () => ({
 export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: string }) {
     const initialMessage = getInitialMessage();
 
-    // Lazy initialization: read from localStorage during first render
-    const [messages, setMessages] = useState<Array<{ role: string, content: string }>>(() => {
-        if (typeof window === 'undefined') return [initialMessage];
-        const keys = getStorageKeys(embedding);
-        const stored = localStorage.getItem(keys.messages);
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    return parsed;
-                }
-            } catch (e) {
-                console.error('Failed to parse stored messages:', e);
-            }
-        }
-        return [initialMessage];
-    });
-
-    const [uuid, setUuid] = useState<string>(() => {
-        if (typeof window === 'undefined') return '';
-        const keys = getStorageKeys(embedding);
-        let stored = localStorage.getItem(keys.uuid);
-        if (!stored) {
-            stored = new Date().toISOString() + uuidv4();
-            localStorage.setItem(keys.uuid, stored);
-        }
-        return stored;
-    });
-
+    // Initialize with consistent default values to avoid hydration mismatch
+    const [messages, setMessages] = useState<Array<{ role: string, content: string }>>([initialMessage]);
+    const [uuid, setUuid] = useState<string>('');
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [embeddingState, setEmbeddingState] = useState<string>(embedding);
-    const isInitialized = useRef(true); // Already initialized via lazy state
+    const isInitialized = useRef(false);
 
-    // Handle embedding switch - restore that embedding's UUID and messages
+    // Restore state from localStorage after mount (client-only)
     useEffect(() => {
-        if (embeddingState === embedding) return;
+        if (isInitialized.current && embeddingState === embedding) return;
 
         const keys = getStorageKeys(embedding);
 
@@ -79,6 +53,7 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
                     setMessages([initialMessage]);
                 }
             } catch (e) {
+                console.error('Failed to parse stored messages:', e);
                 setMessages([initialMessage]);
             }
         } else {
@@ -87,10 +62,12 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
 
         setInput('');
         setEmbeddingState(embedding);
+        isInitialized.current = true;
     }, [embedding]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Persist messages to localStorage whenever they change
     useEffect(() => {
+        if (!isInitialized.current) return;
         if (embeddingState && messages.length > 0) {
             const keys = getStorageKeys(embeddingState);
             localStorage.setItem(keys.messages, JSON.stringify(messages));

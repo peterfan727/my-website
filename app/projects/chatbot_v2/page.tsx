@@ -1,30 +1,30 @@
 'use client';
 
 import ChatbotPage from './chatbot';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function Page() {
+function ChatbotPageContent() {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
     const [embedding, setEmbedding] = useState('gemini');
 
-    // On mount or when URL changes, sync embedding from URL
+    // On mount or when searchParams change, sync embedding from URL
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            const urlEmbedding = params.get('embedding') || 'gemini';
-            setEmbedding(urlEmbedding);
-        }
-    }, []);
+        const urlEmbedding = searchParams.get('embedding') || 'gemini';
+        setEmbedding(urlEmbedding);
+    }, [searchParams]);
 
-    function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setEmbedding(value);
-        // Refresh page with new embedding param
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            params.set('embedding', value);
-            window.location.search = params.toString();
-        }
-    }
+        // Use Next.js router to update URL with client-side navigation
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('embedding', value);
+        router.push(`${pathname}?${params.toString()}`);
+    }, [router, pathname, searchParams]);
 
     return (
         <div className="w-full mx-auto p-4">
@@ -44,5 +44,13 @@ export default function Page() {
             </div>
             <ChatbotPage embedding={embedding} />
         </div>
+    );
+}
+
+export default function Page() {
+    return (
+        <Suspense fallback={<div className="w-full mx-auto p-4">Loading...</div>}>
+            <ChatbotPageContent />
+        </Suspense>
     );
 }
