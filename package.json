@@ -12,8 +12,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.15",
-    "@ai-sdk/react": "^2.0.108",
+    "@ai-sdk/openai": "^3.0.73",
+    "@ai-sdk/react": "^3.0.210",
     "@fontsource/roboto": "^5.2.6",
     "@googlemaps/js-api-loader": "^1.16.10",
     "@googlemaps/markerclusterer": "^2.6.2",
@@ -31,7 +31,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/functions": "^2.2.8",
     "@vercel/speed-insights": "^1.2.0",
-    "ai": "^5.0.108",
+    "ai": "^6.0.208",
     "autoprefixer": "^10.4.21",
     "chromadb": "^3.0.11",
     "eslint": "^9.33.0",
@@ -46,8 +46,8 @@
     "react-dom": "^19.2.3",
     "semver": "^7.7.3",
     "sharp": "^0.34.5",
-    "uuid": "^11.1.0",
-    "vercel": "^50.3.3",
+    "uuid": "^11.1.1",
+    "vercel": "^54.14.2",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -66,11 +66,38 @@
   "overrides": {
     "undici": ">=7.24.0",
     "tar": ">=7.5.11",
+    "@tootallnate/once": ">=2.0.1",
+    "vercel": {
+      "smol-toml": ">=1.6.1"
+    },
+    "@vercel/backends": {
+      "path-to-regexp": ">=8.4.0",
+      "srvx": ">=0.11.13"
+    },
+    "@vercel/express": {
+      "path-to-regexp": ">=8.4.0"
+    },
+    "@vercel/fun": {
+      "path-to-regexp": ">=8.4.0"
+    },
+    "@vercel/hono": {
+      "path-to-regexp": ">=8.4.0"
+    },
     "@vercel/node": {
       "path-to-regexp": ">=8.4.0"
     },
+    "@vercel/python-analysis": {
+      "js-yaml": ">=4.2.0",
+      "smol-toml": ">=1.6.1"
+    },
     "@vercel/remix-builder": {
       "path-to-regexp": ">=8.4.0"
+    },
+    "@vercel/rust": {
+      "smol-toml": ">=1.6.1"
+    },
+    "@vercel/static-config": {
+      "ajv": ">=8.18.0"
     },
     "diff": ">=4.0.4",
     "axios": ">=1.15.0",
