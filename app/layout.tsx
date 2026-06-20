@@ -79,16 +79,18 @@ export default function RootLayout({
       <body
         className='
         antialiased font-ubuntu text-slate-800
-        max-w-6xl min-w-[20em] flex flex-col items-center overflow-y-scroll
-        my-0 mx-3 md:mx-auto min-h-screen'>
-        <Header />
-        <NavbarClient />
-        <main className='flex flex-col items-center text-center
-          w-full max-w-3xl px-4 py-4 md:py-8 md:px-6 flex-1'>
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </main>
+        min-w-[20em] flex flex-col items-center overflow-y-scroll
+        min-h-screen w-full'>
+        <div className='w-full max-w-6xl flex flex-col items-center px-3 md:px-0 flex-1'>
+          <Header />
+          <NavbarClient />
+          <main className='flex flex-col items-center text-center
+            w-full max-w-3xl px-4 py-4 md:py-8 md:px-6 flex-1'>
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </main>
+        </div>
       </body>
     </html>
   )
