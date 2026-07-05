@@ -205,17 +205,23 @@ test.describe('Chatbot V2', () => {
      */
     test('reset button clears conversation', async ({ page }) => {
         await page.goto('/projects/chatbot_v2');
+        await page.evaluate(() => {
+            localStorage.removeItem('chatbot_v2_messages_gemini');
+            localStorage.removeItem('chatbot_v2_uuid_gemini');
+        });
+        await page.reload();
         await page.waitForTimeout(500);
 
         // Send a message
-        const testMessage = 'Message to be reset';
+        const testMessage = 'Hello';
         await page.getByPlaceholder('Type your message...').fill(testMessage);
         await page.getByRole('button', { name: 'Send' }).click();
         await expect(page.getByText(testMessage)).toBeVisible();
 
-        // Wait for AI response
+        // Wait for AI response to start and then fully finish streaming
         const responseLocator = page.locator('.bg-gray-100').nth(1);
         await expect(responseLocator).toBeVisible({ timeout: 45000 });
+        await expect(page.getByText('Chat Agent is thinking...')).not.toBeVisible({ timeout: 45000 });
 
         // Click reset button
         await page.getByRole('button', { name: 'Reset Conversation' }).click();
