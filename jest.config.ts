@@ -23,4 +23,19 @@ const config: Config = {
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config)
+const jestConfig = async () => {
+    const fn = createJestConfig(config)
+    const res = await fn()
+    res.transformIgnorePatterns = (res.transformIgnorePatterns || []).map((pattern) => {
+        if (pattern.includes('(?!.pnpm)')) {
+            return pattern.replace('(?!.pnpm)', '(?!(uuid)/)(?!.pnpm)')
+        }
+        if (pattern.includes('\\.pnpm')) {
+            return pattern.replace('\\.pnpm[\\\\/](?!(geist', '\\.pnpm[\\\\/](?!(uuid|geist')
+        }
+        return pattern
+    })
+    return res
+}
+
+export default jestConfig
