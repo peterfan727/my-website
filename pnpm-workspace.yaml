@@ -7,3 +7,32 @@ allowBuilds:
   protobufjs: true
   sharp: true
   unrs-resolver: true
+
+overrides:
+  undici: ">=7.24.0"
+  tar: ">=7.5.11"
+  "@tootallnate/once": ">=2.0.1"
+  "vercel>smol-toml": ">=1.6.1"
+  "@vercel/backends>path-to-regexp": ">=8.4.0"
+  "@vercel/backends>srvx": ">=0.11.13"
+  "@vercel/express>path-to-regexp": ">=8.4.0"
+  "@vercel/fun>path-to-regexp": ">=8.4.0"
+  "@vercel/hono>path-to-regexp": ">=8.4.0"
+  "@vercel/node>path-to-regexp": ">=8.4.0"
+  "@vercel/python-analysis>js-yaml": ">=4.2.0"
+  "@vercel/python-analysis>smol-toml": ">=1.6.1"
+  "@vercel/remix-builder>path-to-regexp": ">=8.4.0"
+  "@vercel/rust>smol-toml": ">=1.6.1"
+  "@vercel/static-config>ajv": ">=8.18.0"
+  diff: ">=4.0.4"
+  axios: ">=1.15.0"
+  minimatch: ">=10.2.3"
+  flatted: ">=3.4.2"
+  picomatch: ">=4.0.4"
+  protobufjs: ">=7.6.1"
+  form-data: ">=4.0.6"
+  langsmith: ">=0.6.0"
+  "@grpc/grpc-js": ">=1.14.4"
+  postcss: ">=8.5.16"
+  uuid: "^11.1.1"
+  esbuild: ">=0.28.1"
