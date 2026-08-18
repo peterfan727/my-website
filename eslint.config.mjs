@@ -11,7 +11,18 @@ export default defineConfig([
       'coverage/**',
       '__tests__/**',
       '__mocks__/**',
+      '.pnpm-store/**',
+      'playwright-report/**',
+      'test-results/**',
+      'tests/**',
     ],
+  },
+  {
+    settings: {
+      react: {
+        version: '19.0',
+      },
+    },
   },
   ...nextVitals,
 ]);

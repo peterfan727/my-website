@@ -9,10 +9,8 @@ allowBuilds:
   unrs-resolver: true
 
 overrides:
-  undici: ">=7.24.0"
+  undici: ">=7.29.0"
   tar: ">=7.5.21"
-  fast-uri: ">=3.1.4"
-  brace-expansion: ">=5.0.8"
   sharp: ">=0.35.3"
   "@tootallnate/once": ">=2.0.1"
   "vercel>smol-toml": ">=1.6.1"
@@ -22,7 +20,7 @@ overrides:
   "@vercel/fun>path-to-regexp": ">=8.4.0"
   "@vercel/hono>path-to-regexp": ">=8.4.0"
   "@vercel/node>path-to-regexp": ">=8.4.0"
-  "@vercel/python-analysis>js-yaml": ">=4.2.0"
+  "@vercel/python-analysis>js-yaml": ">=4.3.1"
   "@vercel/python-analysis>smol-toml": ">=1.6.1"
   "@vercel/remix-builder>path-to-regexp": ">=8.4.0"
   "@vercel/rust>smol-toml": ">=1.6.1"
@@ -35,5 +33,10 @@ overrides:
   protobufjs: ">=7.6.1"
   form-data: ">=4.0.6"
   "@grpc/grpc-js": ">=1.14.4"
-  postcss: ">=8.5.16"
+  postcss: ">=8.5.23"
   esbuild: ">=0.28.1"
+  fast-uri: ">=3.1.5"
+  brace-expansion: ">=5.0.9"
+  nanoid: ">=3.3.18"
+  ip-address: ">=10.3.1"
+  js-yaml: ">=4.3.1"

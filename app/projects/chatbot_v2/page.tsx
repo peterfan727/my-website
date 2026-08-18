@@ -9,17 +9,20 @@ function ChatbotPageContent() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const [embedding, setEmbedding] = useState('gemini');
+    const urlEmbedding = searchParams.get('embedding') || 'gemini';
+    const [selectedEmbedding, setSelectedEmbedding] = useState<string | null>(null);
 
-    // On mount or when searchParams change, sync embedding from URL
-    useEffect(() => {
-        const urlEmbedding = searchParams.get('embedding') || 'gemini';
-        setEmbedding(urlEmbedding);
-    }, [searchParams]);
+    const [prevUrlEmbedding, setPrevUrlEmbedding] = useState(urlEmbedding);
+    if (urlEmbedding !== prevUrlEmbedding) {
+        setPrevUrlEmbedding(urlEmbedding);
+        setSelectedEmbedding(null);
+    }
+
+    const embedding = selectedEmbedding ?? urlEmbedding;
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
-        setEmbedding(value);
+        setSelectedEmbedding(value);
         // Use Next.js router to update URL with client-side navigation
         const params = new URLSearchParams(searchParams.toString());
         params.set('embedding', value);

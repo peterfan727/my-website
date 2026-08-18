@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 // Helper to get storage keys
@@ -77,16 +77,16 @@ export default function ChatbotPage({ embedding = 'gemini' }: { embedding?: stri
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const aiResponseRef = useRef<string>('');
 
-    useEffect(() => {
-        // Scroll to the bottom when messages change
-        scrollToBottom();
-    }, [messages]);
-
-    function scrollToBottom() {
+    const scrollToBottom = useCallback(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        // Scroll to the bottom when messages change
+        scrollToBottom();
+    }, [messages, scrollToBottom]);
 
     async function sendMessage(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
