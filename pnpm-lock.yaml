@@ -126,7 +126,7 @@ importers:
         specifier: ^8.4.2
         version: 8.4.2
       postcss:
-        specifier: ^8.5.26
+        specifier: '>=8.5.23'
         version: 8.5.26
       react:
         specifier: ^19.2.8
@@ -138,7 +138,7 @@ importers:
         specifier: ^7.8.5
         version: 7.8.5
       sharp:
-        specifier: ^0.35.3
+        specifier: '>=0.35.3'
         version: 0.35.3(@types/node@26.2.0)
       uuid:
         specifier: ^14.0.2
