@@ -9,12 +9,24 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
+minimumReleaseAgeExclude:
+  - fast-uri@4.1.5
+  - ip-address@10.7.1
+  - brace-expansion@5.0.10 || 5.0.11 || 5.0.12
+  - next@16.3.6 || 16.3.8 || 16.4.0
+  - eslint-config-next@16.4.0
+  - '@grpc/grpc-js@1.14.5'
+  - basic-ftp@6.2.1
+  - smol-toml@1.8.1
+  - source-map-js@1.2.2
+  - sharp@0.35.5
+
 overrides:
   undici: ">=7.29.0"
   tar: ">=7.5.21"
-  sharp: ">=0.35.4"
+  sharp: ">=0.35.5"
   "@tootallnate/once": ">=2.0.1"
-  "vercel>smol-toml": ">=1.6.1"
+  "vercel>smol-toml": ">=1.8.1"
   "@vercel/backends>path-to-regexp": ">=8.4.0"
   "@vercel/backends>srvx": ">=0.11.13"
   "@vercel/express>path-to-regexp": ">=8.4.0"
@@ -22,9 +34,9 @@ overrides:
   "@vercel/hono>path-to-regexp": ">=8.4.0"
   "@vercel/node>path-to-regexp": ">=8.4.0"
   "@vercel/python-analysis>js-yaml": ">=4.3.1"
-  "@vercel/python-analysis>smol-toml": ">=1.6.1"
+  "@vercel/python-analysis>smol-toml": ">=1.8.1"
   "@vercel/remix-builder>path-to-regexp": ">=8.4.0"
-  "@vercel/rust>smol-toml": ">=1.6.1"
+  "@vercel/rust>smol-toml": ">=1.8.1"
   "@vercel/static-config>ajv": ">=8.18.0"
   diff: ">=4.0.4"
   axios: ">=1.15.0"
@@ -33,11 +45,13 @@ overrides:
   picomatch: ">=4.0.4"
   protobufjs: ">=7.6.1"
   form-data: ">=4.0.6"
-  "@grpc/grpc-js": ">=1.14.4"
+  "@grpc/grpc-js": ">=1.14.5"
   postcss: ">=8.5.23"
   esbuild: ">=0.28.1"
-  fast-uri: ">=3.1.5"
-  brace-expansion: ">=5.0.9"
+  fast-uri: ">=4.1.5"
+  brace-expansion: ">=5.0.12"
   nanoid: ">=3.3.18"
-  ip-address: ">=10.3.1"
+  ip-address: ">=10.7.1"
   js-yaml: ">=4.3.1"
+  basic-ftp: ">=6.2.1"
+  source-map-js: ">=1.2.2"
