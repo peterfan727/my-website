@@ -9,13 +9,6 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
-auditConfig:
-  ignoreGhsas:
-    - GHSA-vfj7-8cjw-p6xm
-  ignoreCves:
-    - CVE-2026-93687
-
-
 minimumReleaseAgeExclude:
   - fast-uri@4.1.5
   - ip-address@10.7.1
