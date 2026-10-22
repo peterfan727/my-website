@@ -44,29 +44,28 @@ const mockGeocoderInstance = {
 
 // Mock Google Maps Loader
 jest.mock('@googlemaps/js-api-loader', () => ({
-    Loader: jest.fn().mockImplementation(() => ({
-        importLibrary: jest.fn().mockImplementation(async (lib: string) => {
-            if (lib === 'maps') {
-                return {
-                    Map: jest.fn().mockImplementation(() => mockMapInstance),
-                };
-            }
-            if (lib === 'geocoding') {
-                return {
-                    Geocoder: jest.fn().mockImplementation(() => mockGeocoderInstance),
-                };
-            }
-            if (lib === 'marker') {
-                return {
-                    AdvancedMarkerElement: jest.fn().mockImplementation(() => mockMarkerInstance),
-                    PinElement: jest.fn().mockImplementation(() => ({
-                        element: document.createElement('div'),
-                    })),
-                };
-            }
-            return {};
-        }),
-    })),
+    setOptions: jest.fn(),
+    importLibrary: jest.fn().mockImplementation(async (lib: string) => {
+        if (lib === 'maps') {
+            return {
+                Map: jest.fn().mockImplementation(() => mockMapInstance),
+            };
+        }
+        if (lib === 'geocoding') {
+            return {
+                Geocoder: jest.fn().mockImplementation(() => mockGeocoderInstance),
+            };
+        }
+        if (lib === 'marker') {
+            return {
+                AdvancedMarkerElement: jest.fn().mockImplementation(() => mockMarkerInstance),
+                PinElement: jest.fn().mockImplementation(() => ({
+                    element: document.createElement('div'),
+                })),
+            };
+        }
+        return {};
+    }),
 }))
 
 // Mock MarkerClusterer
