@@ -21,15 +21,17 @@ jest.mock('@langchain/openai', () => {
     }
 })
 
-jest.mock('@langchain/google-genai', () => {
+jest.mock('@langchain/google', () => {
     return {
-        ChatGoogleGenerativeAI: jest.fn(),
-        GoogleGenerativeAIEmbeddings: jest.fn().mockImplementation(() => ({
-            embedQuery: jest.fn().mockResolvedValue([])
-        })),
-        TaskType: { RETRIEVAL_QUERY: 'RETRIEVAL_QUERY' }
+        ChatGoogle: jest.fn(),
     }
 })
+jest.mock('../../../lib/GoogleGenAIEmbeddings', () => ({
+    GoogleGenAIEmbeddings: jest.fn().mockImplementation(() => ({
+        embedQuery: jest.fn().mockResolvedValue([]),
+        embedDocuments: jest.fn().mockResolvedValue([]),
+    }))
+}))
 jest.mock('@langchain/core/tools', () => ({
     tool: jest.fn().mockReturnValue({})
 }))

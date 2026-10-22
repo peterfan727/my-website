@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useCallback } from "react"
-import { Loader } from "@googlemaps/js-api-loader"
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader"
 import { MarkerClusterer } from "@googlemaps/markerclusterer"
 import { queryClient, useMapQuery, useAddMapHistory } from "./useMapQuery"
 import styles from './map.module.css'
@@ -36,10 +36,12 @@ const DEFAULT_MAP_OPTIONS = {
     },
 }
 
-const loader = new Loader({
-    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    version: "weekly",
-});
+if (typeof window !== 'undefined') {
+    setOptions({
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        v: "weekly",
+    });
+}
 
 /**
  * Create a Google Map with geocoding UI and markers retrieved from NoSQL database. Allow adding new Markers to the database and on the map.
@@ -86,7 +88,7 @@ export default function Map(props: MapProps) {
         }
 
         try {
-            const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+            const { AdvancedMarkerElement } = await importLibrary('marker');
             const markers = coordinates.map((latlng) => {
                 return new AdvancedMarkerElement({ position: latlng });
             });
@@ -132,9 +134,9 @@ export default function Map(props: MapProps) {
         const init = async () => {
             try {
                 const [{ Map: GoogleMap }, { Geocoder }, { AdvancedMarkerElement, PinElement }] = await Promise.all([
-                    loader.importLibrary('maps'),
-                    loader.importLibrary('geocoding'),
-                    loader.importLibrary('marker'),
+                    importLibrary('maps'),
+                    importLibrary('geocoding'),
+                    importLibrary('marker'),
                 ]);
 
                 if (!isMounted || !mapRef.current) return;

@@ -1,7 +1,6 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore, PineconeStoreParams } from "@langchain/pinecone";
-import { OpenAIEmbeddings } from "@langchain/openai";
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { type EmbeddingsInterface } from "@langchain/core/embeddings";
 
 /**
  * Get a PineconeStore instance.
@@ -9,7 +8,7 @@ import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
  */
 export default async function getPineconeStoreV2(
     indexName: string, 
-    embedding: GoogleGenerativeAIEmbeddings | OpenAIEmbeddings,
+    embedding: EmbeddingsInterface,
     namespace: string | null
 ): Promise<PineconeStore | null> {
     const API_KEY = process.env.PINECONE_API_KEY!

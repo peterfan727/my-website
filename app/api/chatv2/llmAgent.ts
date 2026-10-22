@@ -4,7 +4,7 @@ import { MemorySaver } from '@langchain/langgraph';
 import { createReactAgent } from '@langchain/langgraph/prebuilt';
 import { tool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatGoogle } from '@langchain/google';
 import { z } from 'zod';
 import { OpenAiEmbedding, GeminiEmbedding } from './Embeddings';
 import { V1_PC_INDEX_NAME, PC_INDEX_NAME } from '../../projects/chatbot_v2/Constants';
@@ -119,7 +119,7 @@ export async function getAgent(llmType: 'gemini' | 'openai' = 'gemini', useV1: b
     if (!memoryInstance) memoryInstance = new MemorySaver();
     let llmInstance: any = null;
     if (llmType === 'gemini') {
-        llmInstance = new ChatGoogleGenerativeAI({
+        llmInstance = new ChatGoogle({
             apiKey: process.env.GOOGLE_API_KEY,
             streaming: true,
             model: 'gemini-2.5-flash',
