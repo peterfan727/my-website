@@ -1,10 +1,9 @@
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { GoogleGenAIEmbeddings } from "../../lib/GoogleGenAIEmbeddings";
 import { GOOGLE_API_KEY } from "./private_docs/ApiKeys";
-import { TaskType } from "@google/generative-ai";
 
 
-export const GeminiEmbedding = new GoogleGenerativeAIEmbeddings({
+export const GeminiEmbedding = new GoogleGenAIEmbeddings({
         apiKey: GOOGLE_API_KEY,
-        taskType: TaskType.RETRIEVAL_DOCUMENT,
+        taskType: "RETRIEVAL_DOCUMENT",
         model: "gemini-embedding-001",
     });

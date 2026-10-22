@@ -3,6 +3,16 @@
   "version": "0.2.4",
   "private": true,
   "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": "22.x"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "22.x",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
@@ -16,17 +26,17 @@
     "@ai-sdk/openai": "^4.0.98",
     "@ai-sdk/react": "^4.0.151",
     "@fontsource/roboto": "^5.3.0",
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^2.30.0",
     "@googlemaps/js-api-loader": "^1.16.10",
     "@googlemaps/markerclusterer": "^2.6.2",
     "@langchain/core": "^1.2.20",
-    "@langchain/google-genai": "^2.3.4",
+    "@langchain/google": "^0.2.12",
     "@langchain/langgraph": "^1.5.1",
     "@langchain/openai": "^1.6.3",
     "@langchain/pinecone": "^1.0.3",
     "@pinecone-database/pinecone": "^8.2.0",
     "@tanstack/react-query": "^5.102.8",
-    "@types/node": "^26.5.1",
+    "@types/node": "^22.19.21",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vercel/analytics": "^2.0.1",
